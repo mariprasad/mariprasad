@@ -7,7 +7,7 @@ export const PROFILE = {
     linkedin: "https://www.linkedin.com/in/mariprasadr",
     github: "", // TODO: Mari to provide recent GitHub URL
   },
-  letterboxdUser: "", // TODO: Mari to provide Letterboxd username
+  letterboxdUser: "mariprasad",
   milestones: [
     { label: "Highest trek", value: "15,500 ft" },
     { label: "First trail run", value: "10k" },
