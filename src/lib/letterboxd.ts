@@ -11,7 +11,9 @@ export function parseLetterboxdRss(xml: string): Film[] {
   const list = Array.isArray(items) ? items : items ? [items] : [];
   return list.map((it: any): Film => {
     const rawTitle: string = String(it.title ?? "");
-    const title = rawTitle.split(",")[0].split(" - ")[0].trim();
+    // Letterboxd titles are "Title, YYYY - ★rating". Strip only that trailing
+    // suffix so titles containing commas/hyphens (e.g. "Paris, Texas") survive.
+    const title = rawTitle.replace(/,\s*\d{4}(\s*-\s*.*)?$/, "").trim();
     const desc: string = it.description?.cdata ?? it.description ?? "";
     const poster = /<img[^>]+src="([^"]+)"/.exec(desc)?.[1];
     return {

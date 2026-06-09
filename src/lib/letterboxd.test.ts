@@ -17,3 +17,10 @@ test("parses title, url, poster, and watched date", () => {
   expect(films[0].poster).toContain("poster.jpg");
   expect(films[0].watchedAt).toBe("2026-05-10");
 });
+
+test("preserves commas/hyphens in the title, stripping only the year+rating suffix", () => {
+  const xml = `<?xml version="1.0"?><rss><channel>
+    <item><title>Paris, Texas, 1984 - ★★★★★</title><link>https://letterboxd.com/mari/film/paris-texas/</link></item>
+  </channel></rss>`;
+  expect(parseLetterboxdRss(xml)[0].title).toBe("Paris, Texas");
+});
