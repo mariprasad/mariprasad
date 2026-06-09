@@ -1,19 +1,47 @@
 import { XMLParser } from "fast-xml-parser";
 import { PROFILE } from "@/data/profile";
 
-export type Film = { title: string; url: string; poster?: string; watchedAt?: string };
+export type Film = {
+  title: string;
+  url: string;
+  poster?: string;
+  watchedAt?: string;
+  year?: number;
+  rating?: number; // 0.5 – 5.0, half-star increments
+  rewatch?: boolean;
+  liked?: boolean;
+};
 
 const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_", cdataPropName: "cdata" });
+
+function toNum(v: unknown): number | undefined {
+  const n = typeof v === "number" ? v : parseFloat(String(v ?? ""));
+  return Number.isFinite(n) ? n : undefined;
+}
+
+function isYes(v: unknown): boolean | undefined {
+  return v == null || v === "" ? undefined : String(v).toLowerCase() === "yes";
+}
+
+/** Render a numeric rating as Letterboxd-style stars, e.g. 3.5 → "★★★½". */
+export function ratingStars(rating?: number): string {
+  if (!rating || rating <= 0) return "";
+  return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
+}
 
 export function parseLetterboxdRss(xml: string): Film[] {
   const doc = parser.parse(xml);
   const items = doc?.rss?.channel?.item;
   const list = Array.isArray(items) ? items : items ? [items] : [];
   return list.map((it: any): Film => {
+    // Prefer Letterboxd's structured diary fields; fall back to parsing the title
+    // ("Title, YYYY - ★rating") when they're absent.
+    const structured = it["letterboxd:filmTitle"];
     const rawTitle: string = String(it.title ?? "");
-    // Letterboxd titles are "Title, YYYY - ★rating". Strip only that trailing
-    // suffix so titles containing commas/hyphens (e.g. "Paris, Texas") survive.
-    const title = rawTitle.replace(/,\s*\d{4}(\s*-\s*.*)?$/, "").trim();
+    const title =
+      structured != null && String(structured).length
+        ? String(structured)
+        : rawTitle.replace(/,\s*\d{4}(\s*-\s*.*)?$/, "").trim();
     const desc: string = it.description?.cdata ?? it.description ?? "";
     const poster = /<img[^>]+src="([^"]+)"/.exec(desc)?.[1];
     return {
@@ -21,6 +49,10 @@ export function parseLetterboxdRss(xml: string): Film[] {
       url: String(it.link ?? ""),
       poster,
       watchedAt: it["letterboxd:watchedDate"] ? String(it["letterboxd:watchedDate"]) : undefined,
+      year: toNum(it["letterboxd:filmYear"]),
+      rating: toNum(it["letterboxd:memberRating"]),
+      rewatch: isYes(it["letterboxd:rewatch"]),
+      liked: isYes(it["letterboxd:memberLike"]),
     };
   });
 }

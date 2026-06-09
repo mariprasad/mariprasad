@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Reveal from "@/components/motion/Reveal";
-import type { Film } from "@/lib/letterboxd";
+import { ratingStars, type Film } from "@/lib/letterboxd";
 
 export default function NowWatchingSection({ films }: { films: Film[] }) {
   return (
@@ -18,6 +18,7 @@ export default function NowWatchingSection({ films }: { films: Film[] }) {
             <a key={f.url} href={f.url} target="_blank" rel="noopener noreferrer" className="shrink-0 w-28">
               {f.poster && <Image src={f.poster} alt={f.title} width={112} height={168} className="rounded-md" />}
               <p className="mt-2 text-sm text-ink truncate">{f.title}</p>
+              {f.rating ? <p className="text-terracotta text-xs leading-none">{ratingStars(f.rating)}</p> : null}
             </a>
           ))}
         </div>

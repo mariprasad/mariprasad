@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getRecentFilms, getWatchlist, type Film } from "@/lib/letterboxd";
+import { getRecentFilms, getWatchlist, ratingStars, type Film } from "@/lib/letterboxd";
 import { PROFILE } from "@/data/profile";
 
 export const metadata = { title: "Movies — Mariprasad" };
@@ -11,8 +11,15 @@ function FilmGrid({ films }: { films: Film[] }) {
         <a key={f.url} href={f.url} target="_blank" rel="noopener noreferrer" className="group">
           {f.poster && <Image src={f.poster} alt={f.title} width={185} height={278}
             className="rounded-md w-full h-auto" />}
-          <p className="mt-2 text-sm text-ink">{f.title}</p>
-          {f.watchedAt && <p className="label text-ink-soft">{f.watchedAt}</p>}
+          <p className="mt-2 text-sm text-ink leading-snug">{f.title}</p>
+          {f.rating ? (
+            <p className="text-terracotta text-sm leading-none">
+              {ratingStars(f.rating)}{f.liked ? <span className="ml-1">♥</span> : null}
+            </p>
+          ) : null}
+          {f.watchedAt && (
+            <p className="label text-ink-soft">{f.watchedAt}{f.rewatch ? " · rewatch" : ""}</p>
+          )}
         </a>
       ))}
     </div>
@@ -41,7 +48,7 @@ export default async function MoviesPage() {
       </p>
 
       <section className="mt-10">
-        <h2 className="label text-pine">Recently watched</h2>
+        <h2 className="label text-pine">Diary</h2>
         {watched.length === 0
           ? <p className="mt-3 text-ink-soft">Nothing logged recently.</p>
           : <FilmGrid films={watched} />}
