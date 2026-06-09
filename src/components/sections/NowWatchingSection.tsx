@@ -8,7 +8,7 @@ export default function NowWatchingSection({ films }: { films: Film[] }) {
     <Reveal as="section" className="mx-auto max-w-5xl px-5 py-20">
       <div className="flex items-baseline justify-between">
         <h2 className="text-4xl text-ink">Now Watching</h2>
-        <Link href="/movies" className="label text-terracotta hover:underline">Full watchlist →</Link>
+        <Link href="/movies" className="label text-terracotta hover:underline">Watched &amp; watchlist →</Link>
       </div>
       {films.length === 0 ? (
         <p className="mt-4 text-ink-soft">Recently-watched films will appear here.</p>

@@ -36,3 +36,64 @@ export async function getRecentFilms(): Promise<Film[]> {
     return [];
   }
 }
+
+// --- Watchlist ---
+// Letterboxd publishes no watchlist RSS, so we scrape the public watchlist page
+// for film slugs, then read each film page's OpenGraph tags for title + poster.
+
+function decodeHtmlEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&#0?39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+}
+
+export function parseWatchlistSlugs(html: string): string[] {
+  const slugs: string[] = [];
+  const seen = new Set<string>();
+  const re = /data-item-slug="([^"]+)"/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    if (!seen.has(m[1])) {
+      seen.add(m[1]);
+      slugs.push(m[1]);
+    }
+  }
+  return slugs;
+}
+
+export function parseFilmMeta(html: string): { title: string; poster?: string } {
+  const rawTitle = /<meta property="og:title" content="([^"]+)"/.exec(html)?.[1] ?? "";
+  // og:title is "Title (YYYY)" — drop the trailing year for consistency with the watched grid.
+  const title = decodeHtmlEntities(rawTitle).replace(/\s*\(\d{4}\)\s*$/, "").trim();
+  const poster = /<meta property="og:image" content="([^"]+)"/.exec(html)?.[1];
+  return { title, poster };
+}
+
+export async function getWatchlist(limit = 30): Promise<Film[]> {
+  const user = PROFILE.letterboxdUser;
+  if (!user) return [];
+  try {
+    const res = await fetch(`https://letterboxd.com/${user}/watchlist/`, { next: { revalidate: 3600 } });
+    if (!res.ok) return [];
+    const slugs = parseWatchlistSlugs(await res.text()).slice(0, limit);
+    const films = await Promise.all(
+      slugs.map(async (slug): Promise<Film | null> => {
+        const url = `https://letterboxd.com/film/${slug}/`;
+        try {
+          const r = await fetch(url, { next: { revalidate: 3600 } });
+          if (!r.ok) return null;
+          const { title, poster } = parseFilmMeta(await r.text());
+          return { title: title || slug, url, poster };
+        } catch {
+          return null;
+        }
+      })
+    );
+    return films.filter((f): f is Film => f !== null);
+  } catch {
+    return [];
+  }
+}
