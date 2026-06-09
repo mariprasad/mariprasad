@@ -53,12 +53,12 @@ The warmest, most handmade of the directions explored. Refined enough to carry e
 ### Homepage — single animated scroll
 1. **Hero** — name + "likes to bowl fast and bake slow," a local chip (e.g. Bengaluru + temp — optional, static or weather API later), subtle texture.
 2. **Intro** — 2–3 warm sentences on who Mari is. Hosts the **Ask Mari** prompt (§5).
-3. **Pace / Cricket** — bowling identity (right-arm fast) + fandom (Steyn, McGrath, Brett Lee, fast bowling; Sachin; RCB / IPL) as a tasteful strip.
-4. **The Bakery** — teaser of recent bakes → links to `/baking`.
-5. **Movement** — treks (ABVMAS cert, 15,500 ft), the first 10k trail run, Strava activity → links to `/movement`.
-6. **On the Map** — solo travel across 20 states & UTs → links to `/travel`.
-7. **Now Watching** — Letterboxd-fed recent films strip → links to `/movies`.
-8. **The Work** — short, confident summary + the flight-search LLM case study → links to `/work`.
+3. **The Bakery** — teaser of recent bakes → links to `/baking`.
+4. **The Work** — short, confident summary + the flight-search LLM case study → links to `/work`.
+5. **Pace / Cricket** — bowling identity (right-arm fast) + fandom (Steyn, McGrath, Brett Lee, fast bowling; Sachin; RCB / IPL) as a tasteful strip.
+6. **Movement** — treks (ABVMAS cert, 15,500 ft), the first 10k trail run, Strava activity → links to `/movement`.
+7. **On the Map** — solo travel across 20 states & UTs → links to `/travel`.
+8. **Now Watching** — Letterboxd-fed recent films strip → links to `/movies`.
 9. **Footer** — socials (LinkedIn, GitHub, email), "built with…" note, Spotify now-playing slot.
 
 ### Sub-pages (depth where content earns it)
