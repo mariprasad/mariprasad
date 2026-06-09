@@ -15,7 +15,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
   const { meta, content } = recipe!;
   return (
     <article className="mx-auto max-w-2xl px-5 py-16">
-      <p className="label text-terracotta">{meta.proofTime} proof · {meta.difficulty ?? ""}</p>
+      <p className="label text-terracotta">{`${meta.proofTime} proof${meta.difficulty ? ` · ${meta.difficulty}` : ""}`}</p>
       <h1 className="mt-3 text-4xl text-ink">{meta.title}</h1>
       {meta.cover && (
         <div className="relative mt-6 aspect-[3/2] overflow-hidden rounded-xl">
