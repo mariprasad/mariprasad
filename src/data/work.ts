@@ -4,7 +4,7 @@ export const FEATURED = {
   title: "LLM Flight-Search Pipeline",
   company: "Techtree Labs",
   blurb:
-    "A server-side flight-search pipeline using the OpenAI API with JSON-schema structured outputs, Zod validation, and anti-hallucination grounding against a live airport API.",
+    "A server-side search pipeline for flights using the OpenAI API with JSON-schema structured outputs, Zod validation, and anti-hallucination grounding against a live airport API.",
   stack: ["Next.js", "Node.js", "OpenAI API", "Zod", "PostgreSQL"],
 };
 
