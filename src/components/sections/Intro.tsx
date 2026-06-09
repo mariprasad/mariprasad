@@ -1,4 +1,5 @@
 import Reveal from "@/components/motion/Reveal";
+import AskMari from "@/components/ask/AskMari";
 
 export default function Intro() {
   return (
@@ -10,6 +11,7 @@ export default function Intro() {
       </p>
       <div id="ask-mari-slot" className="mt-10 max-w-2xl">
         <p className="label text-terracotta">Curious about something? Ask me.</p>
+        <div className="mt-3"><AskMari /></div>
       </div>
     </Reveal>
   );
