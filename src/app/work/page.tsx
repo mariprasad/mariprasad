@@ -1,6 +1,10 @@
-import { FEATURED, EXPERIENCE, RESUME_URL } from "@/data/work";
+import { FEATURED, PROJECTS, EXPERIENCE, RESUME_URL } from "@/data/work";
 
 export const metadata = { title: "Work — Mariprasad" };
+
+function prettyHost(url: string): string {
+  return url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
+}
 
 export default function WorkPage() {
   return (
@@ -20,6 +24,39 @@ export default function WorkPage() {
             <li key={s} className="label rounded-full border border-ink/15 px-3 py-1 text-ink-soft">{s}</li>
           ))}
         </ul>
+        {FEATURED.url && (
+          <a href={FEATURED.url} target="_blank" rel="noopener noreferrer"
+            className="mt-5 inline-block label text-terracotta hover:underline">
+            See it live on {prettyHost(FEATURED.url)} →
+          </a>
+        )}
+      </section>
+
+      <section className="mt-12">
+        <h2 className="label text-pine">Selected work</h2>
+        <p className="mt-2 text-sm text-ink-soft max-w-xl">
+          Most of the last few years lives in private repositories — here&apos;s the shape of it.
+        </p>
+        <div className="mt-5 grid sm:grid-cols-2 gap-4">
+          {PROJECTS.map((p) => (
+            <div key={p.name} className="rounded-xl border border-ink/10 bg-paper/30 p-5">
+              <p className="label text-ink-soft">{p.org} · {p.period}</p>
+              <h3 className="mt-1 text-xl text-ink">{p.name}</h3>
+              <p className="mt-2 text-sm text-ink-soft">{p.blurb}</p>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {p.stack.map((s) => (
+                  <li key={s} className="label rounded-full border border-ink/15 px-2.5 py-0.5 text-ink-soft">{s}</li>
+                ))}
+              </ul>
+              {p.url && (
+                <a href={p.url} target="_blank" rel="noopener noreferrer"
+                  className="mt-4 inline-block label text-terracotta hover:underline">
+                  {prettyHost(p.url)} →
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mt-12">
