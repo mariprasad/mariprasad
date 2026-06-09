@@ -2,7 +2,7 @@
 import { useChat } from "ai/react";
 
 export default function AskMari() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({ api: "/api/ask" });
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({ api: "/api/ask" });
   return (
     <div className="rounded-2xl border border-ink/15 bg-paper/50 p-5">
       <div className="space-y-3 max-h-64 overflow-y-auto">
@@ -24,6 +24,11 @@ export default function AskMari() {
           {isLoading ? "…" : "Ask"}
         </button>
       </form>
+      {error && (
+        <p className="mt-3 text-sm text-terracotta">
+          Hmm, that didn&apos;t go through — try again in a moment.
+        </p>
+      )}
     </div>
   );
 }
