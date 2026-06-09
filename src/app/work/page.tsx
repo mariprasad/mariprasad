@@ -11,7 +11,7 @@ export default function WorkPage() {
     <div className="mx-auto max-w-3xl px-5 py-16">
       <h1 className="text-5xl text-ink">The Work</h1>
       <p className="mt-3 text-ink-soft max-w-xl">
-        10+ years across frontend architecture, Node APIs, and lately LLM-powered features.
+        A decade across frontend architecture, Node APIs, and — lately — LLM-powered features.
         <a href={RESUME_URL} className="text-terracotta underline ml-1">Résumé (PDF)</a>.
       </p>
 
