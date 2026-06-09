@@ -53,7 +53,7 @@ src/
     ask/AskMari.tsx            # chat island (client)
     media/PhotoGallery.tsx     # grid + lightbox
     media/Lightbox.tsx
-    map/IndiaMap.tsx           # SVG states, highlights visited
+    map/IndiaMap.tsx           # d3-geo + TopoJSON, highlights visited
   content/
     recipes/*.mdx              # authored bakes
     travel-logs/*.mdx          # optional travel write-ups
@@ -545,7 +545,7 @@ export function byZone(): Record<Zone, Region[]> {
 }
 ```
 
-> Note: `id` values are ISO-3166-2:IN codes so they map to the SVG paths in Task 14/18. "East/Northeast" is collapsed into the `Northeast` zone label for display; the section header reads "East & Northeast".
+> Note: `id` values are ISO-3166-2:IN codes (handy stable keys for lists/UI). The IndiaMap in Task 14 matches visited regions to TopoJSON features by **name** (via `src/lib/geo.ts`), not by these ids. "East/Northeast" is collapsed into the `Northeast` zone label for display; the travel page header reads "East & Northeast".
 
 - [ ] **Step 4: Run — expect pass**
 
@@ -1144,30 +1144,76 @@ git add -A && git commit -m "feat: map section with visited-count headline"
 
 ---
 
-### Task 14: IndiaMap component (SVG states, highlight visited)
+### Task 14: IndiaMap component (d3-geo + TopoJSON, highlight visited)
+
+**Approach:** Load an India-states **TopoJSON**, convert to GeoJSON features (`topojson-client`), project with `d3-geo` (`geoMercator().fitSize(...)`), generate each state's path `d` with `geoPath`, and color states by matching their name to our travel data. `d3-geo` is pure math, so this stays a **Server Component** (no client JS). No hand-pasted path data.
 
 **Files:**
-- Create: `src/components/map/IndiaMap.tsx`, `src/components/map/IndiaMap.test.tsx`
-- Add asset: `public/india-states.svg` source paths (see step 1)
+- Create: `src/components/map/IndiaMap.tsx`, `src/components/map/IndiaMap.test.tsx`, `src/lib/geo.ts`, `src/lib/geo.test.ts`
+- Add asset: `src/data/india.topo.json`
+- Install: `d3-geo`, `topojson-client` (+ types)
 
-- [ ] **Step 1: Obtain an India-states SVG with ISO path ids**
+- [ ] **Step 1: Install + fetch a current India-states TopoJSON**
 
-Download a public-domain India states SVG where each `<path>` has an ISO-3166-2 id (e.g. `id="IN-KA"`). A known source: the Wikimedia "India administrative divisions" blank map SVG, or `simplemaps`/`amcharts` India low-detail SVG. Save the raw paths into a TS module so we can color them with React. Create `src/components/map/india-paths.ts`:
-```ts
-// Each entry: ISO-3166-2:IN code (without the "IN-" prefix) -> SVG path "d".
-// Populate from the chosen India-states SVG. Example shape (replace with real "d" data):
-export const INDIA_PATHS: Record<string, string> = {
-  KA: "M ...", KL: "M ...", TN: "M ...", PY: "M ...", AP: "M ...", TG: "M ...",
-  MH: "M ...", GA: "M ...", GJ: "M ...", RJ: "M ...", MP: "M ...", DL: "M ...",
-  PB: "M ...", HP: "M ...", JK: "M ...", LA: "M ...", BR: "M ...", WB: "M ...",
-  ML: "M ...", AS: "M ...",
-  // ...plus all remaining (unvisited) states so the full map outline renders.
-};
-export const VIEWBOX = "0 0 1000 1100"; // set to match the source SVG's viewBox
+Run:
+```bash
+npm i d3-geo topojson-client
+npm i -D @types/d3-geo @types/topojson-client
 ```
-> The executor must paste the real `d` strings + viewBox from the source SVG. This is data entry, not logic.
+Fetch a TopoJSON with **current (post-2019) boundaries** — i.e. Telangana and Ladakh present as separate states/UTs. Known source: `udit-001/india-maps-data` (states TopoJSON). Save it:
+```bash
+curl -L -o src/data/india.topo.json https://raw.githubusercontent.com/udit-001/india-maps-data/main/topojson/india.json
+```
+> Verify the file: open it and note (a) the key under `objects` (e.g. `india`), and (b) the per-feature name property (commonly `st_nm`, sometimes `NAME_1`). The component reads these defensively, but confirm Ladakh appears as its own feature — if the file predates the 2019 split, pick another source, else the Step 4 test will (correctly) fail with a count of 19.
 
-- [ ] **Step 2: Write smoke test**
+- [ ] **Step 2: TDD the name-matcher**
+
+Create `src/lib/geo.test.ts`:
+```ts
+import { norm, isVisitedName } from "./geo";
+
+test("normalizes names (case, ampersand, punctuation)", () => {
+  expect(norm("Jammu & Kashmir")).toBe("jammuandkashmir");
+  expect(norm("Tamil Nadu")).toBe("tamilnadu");
+});
+
+test("matches visited states including the Delhi alias", () => {
+  expect(isVisitedName("Karnataka")).toBe(true);
+  expect(isVisitedName("NCT of Delhi")).toBe(true); // alias → Delhi
+  expect(isVisitedName("Ladakh")).toBe(true);
+  expect(isVisitedName("Uttar Pradesh")).toBe(false); // not visited
+});
+```
+
+- [ ] **Step 3: Run — expect failure** → `npm test -- geo` FAIL.
+
+- [ ] **Step 4: Implement the matcher**
+
+Create `src/lib/geo.ts`:
+```ts
+import { VISITED } from "@/data/travel";
+
+export function norm(s: string): string {
+  return s.toLowerCase().replace(/&/g, "and").replace(/[^a-z]/g, "");
+}
+
+// Map normalized TopoJSON feature-name variants onto our canonical region names.
+const ALIASES: Record<string, string> = {
+  nctofdelhi: "delhi",
+  delhinct: "delhi",
+};
+
+const visitedNorm = new Set(VISITED.map((v) => norm(v.name)));
+
+export function isVisitedName(featureName: string): boolean {
+  const n = norm(featureName);
+  return visitedNorm.has(n) || visitedNorm.has(ALIASES[n] ?? "");
+}
+```
+
+- [ ] **Step 5: Run test — expect pass** → PASS.
+
+- [ ] **Step 6: Write the IndiaMap smoke test**
 
 Create `src/components/map/IndiaMap.test.tsx`:
 ```tsx
@@ -1175,38 +1221,55 @@ import { render } from "@testing-library/react";
 import IndiaMap from "./IndiaMap";
 import { VISITED } from "@/data/travel";
 
-test("marks visited regions with the visited class", () => {
+test("renders state paths and marks exactly the visited ones", () => {
   const { container } = render(<IndiaMap />);
-  const visitedEls = container.querySelectorAll('[data-visited="true"]');
-  expect(visitedEls.length).toBe(VISITED.length);
+  const all = container.querySelectorAll("path");
+  expect(all.length).toBeGreaterThan(20); // full country outline
+  const visited = container.querySelectorAll('[data-visited="true"]');
+  expect(visited.length).toBe(VISITED.length); // 20
 });
 ```
 
-- [ ] **Step 3: Run — expect failure** → FAIL.
+- [ ] **Step 7: Run — expect failure** → `npm test -- IndiaMap` FAIL.
 
-- [ ] **Step 4: Implement**
+- [ ] **Step 8: Implement IndiaMap (server component)**
 
 Create `src/components/map/IndiaMap.tsx`:
 ```tsx
-import { INDIA_PATHS, VIEWBOX } from "./india-paths";
-import { VISITED } from "@/data/travel";
+import { geoMercator, geoPath } from "d3-geo";
+import { feature } from "topojson-client";
+import type { FeatureCollection } from "geojson";
+import topo from "@/data/india.topo.json";
+import { isVisitedName } from "@/lib/geo";
 
-const visitedSet = new Set(VISITED.map((v) => v.id));
+const W = 500, H = 560;
+
+function getFeatureName(props: Record<string, unknown> | null): string {
+  if (!props) return "";
+  return String(props.st_nm ?? props.NAME_1 ?? props.name ?? "");
+}
 
 export default function IndiaMap() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = topo as any;
+  const objectKey = Object.keys(t.objects)[0];
+  const fc = feature(t, t.objects[objectKey]) as unknown as FeatureCollection;
+  const projection = geoMercator().fitSize([W, H], fc);
+  const path = geoPath(projection);
+
   return (
-    <svg viewBox={VIEWBOX} role="img" aria-label="Map of India with visited states highlighted" className="w-full h-auto">
-      {Object.entries(INDIA_PATHS).map(([id, d]) => {
-        const visited = visitedSet.has(id);
+    <svg viewBox={`0 0 ${W} ${H}`} role="img"
+      aria-label="Map of India with the states and union territories Mari has visited highlighted"
+      className="w-full h-auto">
+      {fc.features.map((f, i) => {
+        const name = getFeatureName(f.properties as Record<string, unknown>);
+        const visited = isVisitedName(name);
         return (
-          <path
-            key={id}
-            d={d}
+          <path key={i} d={path(f) ?? ""}
             data-visited={visited ? "true" : "false"}
             className={visited ? "fill-terracotta/80 stroke-paper" : "fill-paper-deep stroke-ink/15"}
-            strokeWidth={0.8}
-          >
-            <title>{id}</title>
+            strokeWidth={0.5}>
+            <title>{name}</title>
           </path>
         );
       })}
@@ -1214,12 +1277,13 @@ export default function IndiaMap() {
   );
 }
 ```
+> Requires `resolveJsonModule` (default `true` in Next's tsconfig) and `@types/geojson` (transitively present via `@types/d3-geo`; if TS complains, run `npm i -D @types/geojson`).
 
-- [ ] **Step 5: Run test + build** → PASS (once real paths are in); build succeeds. Browser-check the map renders with highlighted states.
+- [ ] **Step 9: Run test + build** → `npm test -- IndiaMap` PASS; `npm run build` succeeds. Browser-check: a real projected India with the 20 visited regions in terracotta.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 10: Commit**
 ```bash
-git add -A && git commit -m "feat: IndiaMap SVG component highlighting visited regions"
+git add -A && git commit -m "feat: IndiaMap via d3-geo + TopoJSON, visited regions matched by name"
 ```
 
 ---
@@ -2304,6 +2368,6 @@ git push
 - [ ] **Strava** OAuth (`STRAVA_CLIENT_ID/SECRET/REFRESH_TOKEN`) → movement feed goes live.
 - [ ] **Spotify** OAuth (`SPOTIFY_CLIENT_ID/SECRET/REFRESH_TOKEN`) → now-playing goes live.
 - [ ] Real **recipes** (MDX in `src/content/recipes/`) + **photos** in `public/photos/...`.
-- [ ] Real **India-states SVG** path data in `src/components/map/india-paths.ts`.
+- [ ] India-states **TopoJSON** present at `src/data/india.topo.json` (fetched in Task 14; current 2019+ boundaries with Telangana + Ladakh).
 - [ ] Refine **Ask Mari corpus** (`src/data/about-corpus.ts`) in your own words.
 ```
