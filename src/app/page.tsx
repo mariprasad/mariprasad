@@ -6,8 +6,10 @@ import CricketSection from "@/components/sections/CricketSection";
 import MovementSection from "@/components/sections/MovementSection";
 import MapSection from "@/components/sections/MapSection";
 import NowWatchingSection from "@/components/sections/NowWatchingSection";
+import { getRecentFilms } from "@/lib/letterboxd";
 
-export default function Home() {
+export default async function Home() {
+  const films = await getRecentFilms();
   return (
     <>
       <Hero />
@@ -17,7 +19,7 @@ export default function Home() {
       <CricketSection />
       <MovementSection />
       <MapSection />
-      <NowWatchingSection films={[]} />
+      <NowWatchingSection films={films} />
     </>
   );
 }
