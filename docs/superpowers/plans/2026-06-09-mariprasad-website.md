@@ -913,7 +913,7 @@ import WorkSection from "./WorkSection";
 
 test("features the LLM pipeline and links to /work", () => {
   render(<WorkSection />);
-  expect(screen.getByText(/flight-search/i)).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: /flight-search/i })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: /work/i })).toHaveAttribute("href", "/work");
 });
 ```
@@ -1032,7 +1032,7 @@ import MovementSection from "./MovementSection";
 test("shows trek altitude and 10k milestone and links to /movement", () => {
   render(<MovementSection />);
   expect(screen.getByText(/15,500 ft/)).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: /movement/i })).toHaveAttribute("href", "/movement");
+  expect(screen.getByRole("link", { name: /climb|movement/i })).toHaveAttribute("href", "/movement");
 });
 ```
 
@@ -1252,8 +1252,9 @@ function getFeatureName(props: Record<string, unknown> | null): string {
 export default function IndiaMap() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const t = topo as any;
-  const objectKey = Object.keys(t.objects)[0];
-  const fc = feature(t, t.objects[objectKey]) as unknown as FeatureCollection;
+  // NOTE: the udit-001 TopoJSON has TWO objects: `districts` (723) and `states` (36).
+  // Use `states` explicitly — Object.keys(...)[0] would wrongly pick `districts`.
+  const fc = feature(t, t.objects.states ?? t.objects[Object.keys(t.objects)[0]]) as unknown as FeatureCollection;
   const projection = geoMercator().fitSize([W, H], fc);
   const path = geoPath(projection);
 
