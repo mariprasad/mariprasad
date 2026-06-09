@@ -6,5 +6,5 @@ class IO {
   disconnect() {}
   takeRecords() { return []; }
 }
-// @ts-expect-error jsdom lacks IntersectionObserver
-globalThis.IntersectionObserver = globalThis.IntersectionObserver ?? IO;
+globalThis.IntersectionObserver =
+  globalThis.IntersectionObserver ?? (IO as unknown as typeof IntersectionObserver);
