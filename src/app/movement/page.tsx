@@ -1,3 +1,5 @@
+import StravaFeed from "@/components/movement/StravaFeed";
+
 export const metadata = { title: "Movement — Mariprasad" };
 
 const TREKS = [
@@ -13,7 +15,7 @@ export default function MovementPage() {
       <p className="mt-3 text-ink-soft max-w-xl">
         Bowling keeps me honest, the mountains keep me humble, and running keeps me going.
       </p>
-      <div id="strava-slot" className="mt-10" />
+      <div className="mt-10"><StravaFeed /></div>
       <ul className="mt-6 space-y-5">
         {TREKS.map((t) => (
           <li key={t.name} className="rounded-xl border border-pine/30 bg-pine/5 p-5">
