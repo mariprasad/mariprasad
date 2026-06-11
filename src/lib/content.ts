@@ -37,3 +37,30 @@ export function getAllRecipes(): Recipe[] {
     .map(getRecipe)
     .sort((a, b) => (a.meta.date < b.meta.date ? 1 : -1));
 }
+
+// --- Baking notes (short articles / tips) ---
+
+const NOTES_DIR = path.join(process.cwd(), "src/content/notes");
+
+export type NoteMeta = { title: string; date: string; summary: string };
+export type Note = { slug: string; meta: NoteMeta; content: string };
+
+export function getNoteSlugs(): string[] {
+  if (!fs.existsSync(NOTES_DIR)) return [];
+  return fs.readdirSync(NOTES_DIR)
+    .filter((f) => f.endsWith(".mdx"))
+    .map((f) => f.replace(/\.mdx$/, ""));
+}
+
+export function getNote(slug: string): Note {
+  const raw = fs.readFileSync(path.join(NOTES_DIR, `${slug}.mdx`), "utf8");
+  const { data, content } = matter(raw);
+  if (data.date instanceof Date) data.date = data.date.toISOString().slice(0, 10);
+  return { slug, meta: data as NoteMeta, content };
+}
+
+export function getAllNotes(): Note[] {
+  return getNoteSlugs()
+    .map(getNote)
+    .sort((a, b) => (a.meta.date < b.meta.date ? 1 : -1));
+}

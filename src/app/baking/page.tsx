@@ -1,11 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getAllRecipes } from "@/lib/content";
+import { getAllRecipes, getAllNotes } from "@/lib/content";
 
 export const metadata = { title: "Baking — Mariprasad" };
 
 export default function BakingIndex() {
   const recipes = getAllRecipes();
+  const notes = getAllNotes();
   return (
     <div className="mx-auto max-w-5xl px-5 py-16">
       <h1 className="text-5xl text-ink">The Bakery</h1>
@@ -27,6 +28,23 @@ export default function BakingIndex() {
           </Link>
         ))}
       </div>
+
+      {notes.length > 0 && (
+        <section className="mt-20">
+          <h2 className="text-3xl text-ink">Baking notes</h2>
+          <p className="mt-2 text-ink-soft max-w-xl">Things I've worked out at the bench.</p>
+          <ul className="mt-6 space-y-4">
+            {notes.map((n) => (
+              <li key={n.slug}>
+                <Link href={`/notes/${n.slug}`} className="group block border-l-2 border-ink/15 pl-4 hover:border-terracotta">
+                  <p className="text-lg text-ink group-hover:text-terracotta transition-colors">{n.meta.title}</p>
+                  <p className="text-sm text-ink-soft">{n.meta.summary}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
