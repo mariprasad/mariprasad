@@ -4,8 +4,9 @@
 // metadata by default. Run: node scripts/optimize-photos.mjs
 //
 // Robust/incremental: a place whose source folder is missing keeps its already
-// -optimized photos (so old Downloads folders don't need to persist). The data
-// file is rebuilt by scanning what's actually on disk.
+// -optimized photos. A place with `limit` keeps only the N sharpest images
+// (variance-of-Laplacian focus measure) — good for trimming a big dump to the
+// clearest frames. The data file is rebuilt by scanning what's on disk.
 import sharp from "sharp";
 import fs from "node:fs";
 import path from "node:path";
@@ -17,28 +18,56 @@ const PLACES = [
   { slug: "ooty", place: "Ooty", state: "Tamil Nadu", src: "C:/Users/ASUS/Downloads/Ooty" },
   { slug: "goa", place: "Goa", state: "Goa", src: "C:/Users/ASUS/Downloads/Goa/iCloud Photos" },
   { slug: "assam", place: "Assam", state: "Assam", src: "C:/Users/ASUS/Downloads/Assam/iCloud Photos" },
-  { slug: "westcoast-ka", place: "West Coast", state: "Karnataka", src: "C:/Users/ASUS/Downloads/westcoast-ka/iCloud Photos" },
+  { slug: "chettinad", place: "Chettinad", state: "Tamil Nadu", src: "C:/Users/ASUS/Downloads/Chettinadu/iCloud Photos" },
+  // Big dump → keep only the 18 sharpest frames.
+  { slug: "westcoast-ka", place: "Chikmagalur", state: "Karnataka", src: "C:/Users/ASUS/Downloads/westcoast-ka/iCloud Photos", limit: 18 },
 ];
 
 const isImage = (f) => /\.(jpe?g|png|heic)$/i.test(f);
+
+// Variance-of-Laplacian focus measure: higher = sharper / more in focus.
+async function sharpness(file) {
+  const { channels } = await sharp(file)
+    .greyscale()
+    .resize(512, 512, { fit: "inside" })
+    .convolve({ width: 3, height: 3, kernel: [0, 1, 0, 1, -4, 1, 0, 1, 0] })
+    .stats();
+  return channels[0].stdev;
+}
+
+async function selectFiles(dir, files, limit) {
+  if (!limit || files.length <= limit) return files;
+  const scored = [];
+  for (const f of files) {
+    try {
+      scored.push({ f, s: await sharpness(path.join(dir, f)) });
+    } catch {
+      scored.push({ f, s: 0 });
+    }
+  }
+  scored.sort((a, b) => b.s - a.s);
+  const kept = new Set(scored.slice(0, limit).map((x) => x.f));
+  return files.filter((f) => kept.has(f)); // keep original (filename) order
+}
 
 for (const p of PLACES) {
   const outDir = path.join(TRAVEL_DIR, p.slug);
   if (p.src && fs.existsSync(p.src)) {
     fs.rmSync(outDir, { recursive: true, force: true });
     fs.mkdirSync(outDir, { recursive: true });
-    const files = fs.readdirSync(p.src).filter(isImage).sort();
+    const all = fs.readdirSync(p.src).filter(isImage).sort();
+    const files = await selectFiles(p.src, all, p.limit);
     let i = 0;
     for (const f of files) {
       i += 1;
       const name = `${p.slug}-${String(i).padStart(2, "0")}.jpg`;
       await sharp(path.join(p.src, f))
-        .rotate() // apply EXIF orientation, then metadata is dropped
+        .rotate()
         .resize({ width: 2000, height: 2000, fit: "inside", withoutEnlargement: true })
         .jpeg({ quality: 80, mozjpeg: true })
         .toFile(path.join(outDir, name));
     }
-    console.log(`${p.place}: processed ${i} photos`);
+    console.log(`${p.place}: kept ${i}${p.limit ? ` of ${all.length} (sharpest)` : ""}`);
   } else if (fs.existsSync(outDir)) {
     console.log(`${p.place}: source missing — keeping ${fs.readdirSync(outDir).length} existing photos`);
   } else {

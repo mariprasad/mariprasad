@@ -67,8 +67,25 @@ export const TRAVEL_GALLERIES: PlaceGallery[] = [
     ]
   },
   {
+    "slug": "chettinad",
+    "place": "Chettinad",
+    "state": "Tamil Nadu",
+    "photos": [
+      "/photos/travel/chettinad/chettinad-01.jpg",
+      "/photos/travel/chettinad/chettinad-02.jpg",
+      "/photos/travel/chettinad/chettinad-03.jpg",
+      "/photos/travel/chettinad/chettinad-04.jpg",
+      "/photos/travel/chettinad/chettinad-05.jpg",
+      "/photos/travel/chettinad/chettinad-06.jpg",
+      "/photos/travel/chettinad/chettinad-07.jpg",
+      "/photos/travel/chettinad/chettinad-08.jpg",
+      "/photos/travel/chettinad/chettinad-09.jpg",
+      "/photos/travel/chettinad/chettinad-10.jpg"
+    ]
+  },
+  {
     "slug": "westcoast-ka",
-    "place": "West Coast",
+    "place": "Chikmagalur",
     "state": "Karnataka",
     "photos": [
       "/photos/travel/westcoast-ka/westcoast-ka-01.jpg",
@@ -88,43 +105,7 @@ export const TRAVEL_GALLERIES: PlaceGallery[] = [
       "/photos/travel/westcoast-ka/westcoast-ka-15.jpg",
       "/photos/travel/westcoast-ka/westcoast-ka-16.jpg",
       "/photos/travel/westcoast-ka/westcoast-ka-17.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-18.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-19.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-20.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-21.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-22.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-23.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-24.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-25.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-26.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-27.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-28.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-29.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-30.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-31.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-32.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-33.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-34.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-35.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-36.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-37.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-38.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-39.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-40.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-41.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-42.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-43.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-44.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-45.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-46.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-47.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-48.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-49.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-50.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-51.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-52.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-53.jpg",
-      "/photos/travel/westcoast-ka/westcoast-ka-54.jpg"
+      "/photos/travel/westcoast-ka/westcoast-ka-18.jpg"
     ]
   }
 ];
