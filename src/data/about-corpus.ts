@@ -13,7 +13,9 @@ CRICKET
 - Favourite batsman: Sachin Tendulkar. IPL team: Royal Challengers Bengaluru.
 
 BAKING (since July 2024)
-- Many milk breads; semi-sourdough breads (~24h); true sourdough (~3 days / 72h).
+- Started in July 2024 with semi-sourdough (~24h) loaves, then moved into 3-day (72h) sourdough.
+- Recently mostly milk breads — works from a flexible milk-bread (shokupan / tangzhong) base, dialling richness up or down (butter, egg, sugar) per bake.
+- Also bakes brioche, cinnamon rolls, and ripe-plantain doughnuts.
 - Tried croissants, failed honestly so far, intends to conquer them.
 - Cooks occasionally these days.
 
