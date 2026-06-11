@@ -54,8 +54,9 @@ export default async function TravelPage() {
                   )}
                 </div>
                 {p.region && <p className="label text-pine mt-0.5">{p.region}</p>}
-                {p.food && <p className="mt-2 text-sm text-ink">{p.food}</p>}
-                {p.note && <p className="mt-1 text-sm text-ink-soft">{p.note}</p>}
+                {/* Lead line: what I ate if noted, else the note / a cool fact. */}
+                {(p.food || p.note) && <p className="mt-2 text-sm text-ink">{p.food ?? p.note}</p>}
+                {p.food && p.note && <p className="mt-1 text-sm text-ink-soft">{p.note}</p>}
                 {p.date && <p className="label text-ink-soft mt-3">{p.date}</p>}
               </div>
             ))}
