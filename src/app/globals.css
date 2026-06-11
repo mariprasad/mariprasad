@@ -2,12 +2,13 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-paper: #efe6d6;
-  --color-paper-deep: #e3d5bd;
-  --color-ink: #3d2f1e;
-  --color-ink-soft: #6b573a;
-  --color-terracotta: #a8553a;
-  --color-pine: #5b6e4f;
+  /* Terrazzo-green base with bold tribal accents */
+  --color-paper: #e1ebda;       /* light sage base */
+  --color-paper-deep: #d2e0c8;  /* deeper sage for surfaces */
+  --color-ink: #233026;         /* deep green-charcoal text */
+  --color-ink-soft: #586b5b;    /* muted sage-grey text */
+  --color-terracotta: #b0492c;  /* primary bold accent */
+  --color-pine: #0f6e56;        /* deep teal accent (pops on sage) */
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-jb), ui-monospace, monospace;
@@ -18,9 +19,9 @@
 body {
   background-color: var(--color-paper);
   background-image:
-    linear-gradient(135deg, var(--color-paper), var(--color-paper-deep)),
-    radial-gradient(rgba(201, 180, 143, 0.35) 0.5px, transparent 0.5px);
-  background-size: cover, 6px 6px;
+    linear-gradient(160deg, var(--color-paper), var(--color-paper-deep)),
+    url("/textures/terrazzo.svg");
+  background-size: cover, 340px 340px;
   background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-body);
