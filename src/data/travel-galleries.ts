@@ -149,5 +149,28 @@ export const TRAVEL_GALLERIES = [
       "/photos/travel/westcoast-ka/westcoast-ka-17.jpg",
       "/photos/travel/westcoast-ka/westcoast-ka-18.jpg"
     ]
+  },
+  {
+    "slug": "blr-chikkaballapur",
+    "place": "Bengaluru & Chikkaballapur",
+    "state": "Karnataka",
+    "photos": [
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-01.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-02.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-03.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-04.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-05.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-06.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-07.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-08.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-09.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-10.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-11.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-12.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-13.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-14.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-15.jpg",
+      "/photos/travel/blr-chikkaballapur/blr-chikkaballapur-16.jpg"
+    ]
   }
 ];

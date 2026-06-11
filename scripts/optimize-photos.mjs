@@ -22,11 +22,17 @@ const TRAVEL = [
   { slug: "kashmir", place: "Kashmir", state: "Jammu & Kashmir", src: "C:/Users/ASUS/Downloads/Kashmir/iCloud Photos" },
   { slug: "ladakh", place: "Ladakh", state: "Ladakh", src: "C:/Users/ASUS/Downloads/Ladakh/iCloud Photos", limit: 20 },
   { slug: "westcoast-ka", place: "Chikmagalur", state: "Karnataka", src: "C:/Users/ASUS/Downloads/westcoast-ka/iCloud Photos", limit: 18 },
+  { slug: "blr-chikkaballapur", place: "Bengaluru & Chikkaballapur", state: "Karnataka", src: "C:/Users/ASUS/Downloads/Bangalore-Chikkaballapur/iCloud Photos" },
 ];
 
 // Movement galleries → src/data/movement-galleries.ts  ({slug, title, photos})
 const MOVEMENT = [
   { slug: "trekking", title: "On the trail", src: "C:/Users/ASUS/Downloads/Trekking/iCloud Photos", limit: 20 },
+];
+
+// Cricket galleries → src/data/cricket-galleries.ts  ({slug, title, photos})
+const CRICKET = [
+  { slug: "cricket", title: "On the field", src: "C:/Users/ASUS/Downloads/Cricket/iCloud Photos" },
 ];
 
 const isImage = (f) => /\.(jpe?g|png|heic)$/i.test(f);
@@ -93,6 +99,7 @@ function writeData(file, type, rows) {
 
 for (const s of TRAVEL) await processSet("travel", s);
 for (const s of MOVEMENT) await processSet("movement", s);
+for (const s of CRICKET) await processSet("cricket", s);
 
 const travelRows = TRAVEL
   .map((s) => ({ slug: s.slug, place: s.place, state: s.state, photos: listPhotos("travel", s.slug) }))
@@ -110,4 +117,13 @@ writeData(
   { name: "movement-galleries.ts", varName: "MOVEMENT_GALLERIES" },
   "export type MovementGallery = { slug: string; title: string; photos: string[] };",
   movementRows,
+);
+
+const cricketRows = CRICKET
+  .map((s) => ({ slug: s.slug, title: s.title, photos: listPhotos("cricket", s.slug) }))
+  .filter((r) => r.photos.length);
+writeData(
+  { name: "cricket-galleries.ts", varName: "CRICKET_GALLERIES" },
+  "export type CricketGallery = { slug: string; title: string; photos: string[] };",
+  cricketRows,
 );
