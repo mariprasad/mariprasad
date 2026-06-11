@@ -13,14 +13,13 @@ export type Place = {
   lat?: number;
   lng?: number;
   date?: string;
+  savedAt?: string; // Airtable createdTime — used for ordering
 };
 
 export async function getSavedPlaces(limit = 60): Promise<Place[]> {
   const token = process.env.AIRTABLE_TOKEN;
   if (!token) return [];
-  const url =
-    `https://api.airtable.com/v0/${BASE_ID}/${TABLE}` +
-    `?sort%5B0%5D%5Bfield%5D=Date&sort%5B0%5D%5Bdirection%5D=desc&maxRecords=${limit}`;
+  const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE}?maxRecords=${limit}`;
   try {
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
@@ -40,8 +39,11 @@ export async function getSavedPlaces(limit = 60): Promise<Place[]> {
         lat: typeof r.fields?.Lat === "number" ? r.fields.Lat : undefined,
         lng: typeof r.fields?.Lng === "number" ? r.fields.Lng : undefined,
         date: r.fields?.Date ? String(r.fields.Date) : undefined,
+        savedAt: r.createdTime ? String(r.createdTime) : undefined,
       }))
-      .filter((p) => p.name);
+      .filter((p) => p.name)
+      // Newest-saved first (the `Date` field is optional / for backfilled visits).
+      .sort((a, b) => (a.savedAt ?? "") < (b.savedAt ?? "") ? 1 : -1);
   } catch {
     return [];
   }
