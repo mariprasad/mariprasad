@@ -39,7 +39,7 @@ const CRICKET = [
 // `files` is an explicit, ordered list (cover first) selected from the Bake folder.
 const BAKE = "C:/Users/ASUS/Downloads/Bake";
 const BAKING = [
-  { slug: "sourdough", src: BAKE, files: [
+  { slug: "semi-sourdough", src: BAKE, files: [
     "WhatsApp Image 2026-06-11 at 2.58.27 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.41 PM.jpeg",
   ] },
@@ -54,7 +54,7 @@ const BAKING = [
     "WhatsApp Image 2026-06-11 at 2.53.23 PM (1).jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.23 PM.jpeg",
   ] },
-  { slug: "brioche", src: BAKE, files: [
+  { slug: "plantain-doughnuts", src: BAKE, files: [
     "WhatsApp Image 2026-06-11 at 2.53.22 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.21 PM.jpeg",
   ] },

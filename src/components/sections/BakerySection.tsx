@@ -4,7 +4,7 @@ import Reveal from "@/components/motion/Reveal";
 import { getAllRecipes } from "@/lib/content";
 
 export default function BakerySection() {
-  const recent = getAllRecipes().slice(0, 3);
+  const recent = getAllRecipes().filter((r) => r.meta.cover).slice(0, 3);
   return (
     <Reveal as="section" className="mx-auto max-w-5xl px-5 py-20">
       <div className="flex items-baseline justify-between">

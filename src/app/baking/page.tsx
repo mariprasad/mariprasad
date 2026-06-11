@@ -13,10 +13,14 @@ export default function BakingIndex() {
       <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((r) => (
           <Link key={r.slug} href={`/baking/${r.slug}`} className="group block">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-paper-deep">
-              {r.meta.cover && <Image src={r.meta.cover} alt={r.meta.title} fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width:640px) 100vw, 33vw" />}
+            <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-paper-deep grid place-items-center">
+              {r.meta.cover ? (
+                <Image src={r.meta.cover} alt={r.meta.title} fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width:640px) 100vw, 33vw" />
+              ) : (
+                <span className="label text-ink-soft">Photos coming</span>
+              )}
             </div>
             <h2 className="mt-3 text-xl text-ink">{r.meta.title}</h2>
             <p className="label text-ink-soft">{r.meta.proofTime} · {r.meta.difficulty ?? "—"}</p>
