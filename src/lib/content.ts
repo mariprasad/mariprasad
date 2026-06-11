@@ -12,6 +12,7 @@ export type RecipeMeta = {
   summary: string;
   cover?: string;
   photos?: string[];
+  status?: string; // e.g. "Next goal" — shown on the card when there's no cover yet
 };
 
 export type Recipe = { slug: string; meta: RecipeMeta; content: string };

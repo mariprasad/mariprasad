@@ -20,7 +20,7 @@ export default function BakingIndex() {
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width:640px) 100vw, 33vw" />
               ) : (
-                <span className="label text-ink-soft">Photos coming</span>
+                <span className="label text-pine">{r.meta.status ?? "Photos coming"}</span>
               )}
             </div>
             <h2 className="mt-3 text-xl text-ink">{r.meta.title}</h2>
