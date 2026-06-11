@@ -32,7 +32,11 @@ const MOVEMENT = [
 
 // Cricket galleries → src/data/cricket-galleries.ts  ({slug, title, photos})
 const CRICKET = [
-  { slug: "cricket", title: "On the field", src: "C:/Users/ASUS/Downloads/Cricket/iCloud Photos" },
+  // cricket-action.jpg = the run-up shot, cropped free of the iPhone Photos UI.
+  { slug: "cricket", title: "On the field", src: "C:/Users/ASUS/Downloads/Cricket/iCloud Photos", files: [
+    "cricket-action.jpg",
+    "IMG_3965.JPEG",
+  ] },
 ];
 
 // Baking: photos referenced directly from recipe MDX frontmatter (no data file).
