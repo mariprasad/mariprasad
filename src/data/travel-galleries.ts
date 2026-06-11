@@ -99,6 +99,33 @@ export const TRAVEL_GALLERIES: PlaceGallery[] = [
     ]
   },
   {
+    "slug": "ladakh",
+    "place": "Ladakh",
+    "state": "Ladakh",
+    "photos": [
+      "/photos/travel/ladakh/ladakh-01.jpg",
+      "/photos/travel/ladakh/ladakh-02.jpg",
+      "/photos/travel/ladakh/ladakh-03.jpg",
+      "/photos/travel/ladakh/ladakh-04.jpg",
+      "/photos/travel/ladakh/ladakh-05.jpg",
+      "/photos/travel/ladakh/ladakh-06.jpg",
+      "/photos/travel/ladakh/ladakh-07.jpg",
+      "/photos/travel/ladakh/ladakh-08.jpg",
+      "/photos/travel/ladakh/ladakh-09.jpg",
+      "/photos/travel/ladakh/ladakh-10.jpg",
+      "/photos/travel/ladakh/ladakh-11.jpg",
+      "/photos/travel/ladakh/ladakh-12.jpg",
+      "/photos/travel/ladakh/ladakh-13.jpg",
+      "/photos/travel/ladakh/ladakh-14.jpg",
+      "/photos/travel/ladakh/ladakh-15.jpg",
+      "/photos/travel/ladakh/ladakh-16.jpg",
+      "/photos/travel/ladakh/ladakh-17.jpg",
+      "/photos/travel/ladakh/ladakh-18.jpg",
+      "/photos/travel/ladakh/ladakh-19.jpg",
+      "/photos/travel/ladakh/ladakh-20.jpg"
+    ]
+  },
+  {
     "slug": "westcoast-ka",
     "place": "Chikmagalur",
     "state": "Karnataka",

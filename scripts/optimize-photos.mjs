@@ -20,6 +20,7 @@ const PLACES = [
   { slug: "assam", place: "Assam", state: "Assam", src: "C:/Users/ASUS/Downloads/Assam/iCloud Photos" },
   { slug: "chettinad", place: "Chettinad", state: "Tamil Nadu", src: "C:/Users/ASUS/Downloads/Chettinadu/iCloud Photos" },
   { slug: "kashmir", place: "Kashmir", state: "Jammu & Kashmir", src: "C:/Users/ASUS/Downloads/Kashmir/iCloud Photos" },
+  { slug: "ladakh", place: "Ladakh", state: "Ladakh", src: "C:/Users/ASUS/Downloads/Ladakh/iCloud Photos", limit: 20 },
   // Big dump → keep only the 18 sharpest frames.
   { slug: "westcoast-ka", place: "Chikmagalur", state: "Karnataka", src: "C:/Users/ASUS/Downloads/westcoast-ka/iCloud Photos", limit: 18 },
 ];
