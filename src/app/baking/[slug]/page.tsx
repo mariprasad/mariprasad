@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import Image from "next/image";
 import PhotoGallery from "@/components/media/PhotoGallery";
 import { getRecipe, getRecipeSlugs } from "@/lib/content";
@@ -23,7 +24,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
         </div>
       )}
       <div className="prose prose-stone mt-8 max-w-none text-ink">
-        <MDXRemote source={content} />
+        <MDXRemote source={content} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
       </div>
       {meta.photos && meta.photos.length > 0 && (
         <div className="mt-10"><PhotoGallery photos={meta.photos} alt={meta.title} /></div>

@@ -35,6 +35,31 @@ const CRICKET = [
   { slug: "cricket", title: "On the field", src: "C:/Users/ASUS/Downloads/Cricket/iCloud Photos" },
 ];
 
+// Baking: photos referenced directly from recipe MDX frontmatter (no data file).
+// `files` is an explicit, ordered list (cover first) selected from the Bake folder.
+const BAKE = "C:/Users/ASUS/Downloads/Bake";
+const BAKING = [
+  { slug: "sourdough", src: BAKE, files: [
+    "WhatsApp Image 2026-06-11 at 2.58.27 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.41 PM.jpeg",
+  ] },
+  { slug: "shokupan", src: BAKE, files: [
+    "WhatsApp Image 2026-06-11 at 2.53.34 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.29 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.33 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.27 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.32 PM.jpeg",
+  ] },
+  { slug: "cinnamon-rolls", src: BAKE, files: [
+    "WhatsApp Image 2026-06-11 at 2.53.23 PM (1).jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.23 PM.jpeg",
+  ] },
+  { slug: "brioche", src: BAKE, files: [
+    "WhatsApp Image 2026-06-11 at 2.53.22 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.21 PM.jpeg",
+  ] },
+];
+
 const isImage = (f) => /\.(jpe?g|png|heic)$/i.test(f);
 
 // Variance-of-Laplacian focus measure: higher = sharper / more in focus.
@@ -64,8 +89,8 @@ async function processSet(category, set) {
   if (set.src && fs.existsSync(set.src)) {
     fs.rmSync(outDir, { recursive: true, force: true });
     fs.mkdirSync(outDir, { recursive: true });
-    const all = fs.readdirSync(set.src).filter(isImage).sort();
-    const files = await selectFiles(set.src, all, set.limit);
+    const all = set.files ?? fs.readdirSync(set.src).filter(isImage).sort();
+    const files = set.files ? all : await selectFiles(set.src, all, set.limit);
     let i = 0;
     for (const f of files) {
       i += 1;
@@ -100,6 +125,7 @@ function writeData(file, type, rows) {
 for (const s of TRAVEL) await processSet("travel", s);
 for (const s of MOVEMENT) await processSet("movement", s);
 for (const s of CRICKET) await processSet("cricket", s);
+for (const s of BAKING) await processSet("baking", s);
 
 const travelRows = TRAVEL
   .map((s) => ({ slug: s.slug, place: s.place, state: s.state, photos: listPhotos("travel", s.slug) }))
