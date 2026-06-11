@@ -51,12 +51,12 @@ const BAKING = [
     "WhatsApp Image 2026-06-11 at 2.53.34 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.29 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.33 PM.jpeg",
-    "WhatsApp Image 2026-06-11 at 2.53.27 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.32 PM.jpeg",
   ] },
-  { slug: "cinnamon-rolls", src: BAKE, files: [
-    "WhatsApp Image 2026-06-11 at 2.53.23 PM (1).jpeg",
-    "WhatsApp Image 2026-06-11 at 2.53.23 PM.jpeg",
+  // Sweet Bread (cinnamon-roll dough). Placeholder cover = the golden sandwich
+  // loaf; swap to the 2-loaf shot once that file lands in the Bake folder.
+  { slug: "sweet-bread", src: BAKE, files: [
+    "WhatsApp Image 2026-06-11 at 2.53.27 PM.jpeg",
   ] },
   { slug: "plantain-doughnuts", src: BAKE, files: [
     "WhatsApp Image 2026-06-11 at 2.53.22 PM.jpeg",
