@@ -1,28 +1,32 @@
 // Re-runnable photo optimizer: resizes curated source folders into
-// public/photos/travel/<slug>/ and regenerates src/data/travel-galleries.ts.
+// public/photos/<category>/<slug>/ and regenerates the matching data files.
 // Auto-orients via EXIF then strips ALL metadata (incl. GPS) — sharp drops
 // metadata by default. Run: node scripts/optimize-photos.mjs
 //
-// Robust/incremental: a place whose source folder is missing keeps its already
-// -optimized photos. A place with `limit` keeps only the N sharpest images
-// (variance-of-Laplacian focus measure) — good for trimming a big dump to the
-// clearest frames. The data file is rebuilt by scanning what's on disk.
+// `limit` keeps only the N sharpest images (variance-of-Laplacian focus
+// measure). A set whose source folder is missing keeps its already-optimized
+// photos. Data files are rebuilt by scanning what's on disk.
 import sharp from "sharp";
 import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = process.cwd();
-const TRAVEL_DIR = path.join(ROOT, "public/photos/travel");
+const PHOTOS_DIR = path.join(ROOT, "public/photos");
 
-const PLACES = [
+// Travel galleries → src/data/travel-galleries.ts  ({slug, place, state, photos})
+const TRAVEL = [
   { slug: "ooty", place: "Ooty", state: "Tamil Nadu", src: "C:/Users/ASUS/Downloads/Ooty" },
   { slug: "goa", place: "Goa", state: "Goa", src: "C:/Users/ASUS/Downloads/Goa/iCloud Photos" },
   { slug: "assam", place: "Assam", state: "Assam", src: "C:/Users/ASUS/Downloads/Assam/iCloud Photos" },
   { slug: "chettinad", place: "Chettinad", state: "Tamil Nadu", src: "C:/Users/ASUS/Downloads/Chettinadu/iCloud Photos" },
   { slug: "kashmir", place: "Kashmir", state: "Jammu & Kashmir", src: "C:/Users/ASUS/Downloads/Kashmir/iCloud Photos" },
   { slug: "ladakh", place: "Ladakh", state: "Ladakh", src: "C:/Users/ASUS/Downloads/Ladakh/iCloud Photos", limit: 20 },
-  // Big dump → keep only the 18 sharpest frames.
   { slug: "westcoast-ka", place: "Chikmagalur", state: "Karnataka", src: "C:/Users/ASUS/Downloads/westcoast-ka/iCloud Photos", limit: 18 },
+];
+
+// Movement galleries → src/data/movement-galleries.ts  ({slug, title, photos})
+const MOVEMENT = [
+  { slug: "trekking", title: "On the trail", src: "C:/Users/ASUS/Downloads/Trekking/iCloud Photos", limit: 20 },
 ];
 
 const isImage = (f) => /\.(jpe?g|png|heic)$/i.test(f);
@@ -41,59 +45,69 @@ async function selectFiles(dir, files, limit) {
   if (!limit || files.length <= limit) return files;
   const scored = [];
   for (const f of files) {
-    try {
-      scored.push({ f, s: await sharpness(path.join(dir, f)) });
-    } catch {
-      scored.push({ f, s: 0 });
-    }
+    try { scored.push({ f, s: await sharpness(path.join(dir, f)) }); }
+    catch { scored.push({ f, s: 0 }); }
   }
   scored.sort((a, b) => b.s - a.s);
   const kept = new Set(scored.slice(0, limit).map((x) => x.f));
-  return files.filter((f) => kept.has(f)); // keep original (filename) order
+  return files.filter((f) => kept.has(f));
 }
 
-for (const p of PLACES) {
-  const outDir = path.join(TRAVEL_DIR, p.slug);
-  if (p.src && fs.existsSync(p.src)) {
+async function processSet(category, set) {
+  const outDir = path.join(PHOTOS_DIR, category, set.slug);
+  if (set.src && fs.existsSync(set.src)) {
     fs.rmSync(outDir, { recursive: true, force: true });
     fs.mkdirSync(outDir, { recursive: true });
-    const all = fs.readdirSync(p.src).filter(isImage).sort();
-    const files = await selectFiles(p.src, all, p.limit);
+    const all = fs.readdirSync(set.src).filter(isImage).sort();
+    const files = await selectFiles(set.src, all, set.limit);
     let i = 0;
     for (const f of files) {
       i += 1;
-      const name = `${p.slug}-${String(i).padStart(2, "0")}.jpg`;
-      await sharp(path.join(p.src, f))
+      const name = `${set.slug}-${String(i).padStart(2, "0")}.jpg`;
+      await sharp(path.join(set.src, f))
         .rotate()
         .resize({ width: 2000, height: 2000, fit: "inside", withoutEnlargement: true })
         .jpeg({ quality: 80, mozjpeg: true })
         .toFile(path.join(outDir, name));
     }
-    console.log(`${p.place}: kept ${i}${p.limit ? ` of ${all.length} (sharpest)` : ""}`);
+    console.log(`${category}/${set.slug}: kept ${i}${set.limit ? ` of ${all.length} (sharpest)` : ""}`);
   } else if (fs.existsSync(outDir)) {
-    console.log(`${p.place}: source missing — keeping ${fs.readdirSync(outDir).length} existing photos`);
+    console.log(`${category}/${set.slug}: source missing — keeping ${fs.readdirSync(outDir).length} existing`);
   } else {
-    console.log(`${p.place}: no source and nothing on disk — skipped`);
+    console.log(`${category}/${set.slug}: no source and nothing on disk — skipped`);
   }
 }
 
-// Rebuild the data file from what's actually on disk.
-const galleries = [];
-for (const p of PLACES) {
-  const outDir = path.join(TRAVEL_DIR, p.slug);
-  if (!fs.existsSync(outDir)) continue;
-  const photos = fs
-    .readdirSync(outDir)
-    .filter((f) => /\.jpg$/i.test(f))
-    .sort()
-    .map((f) => `/photos/travel/${p.slug}/${f}`);
-  if (photos.length) galleries.push({ slug: p.slug, place: p.place, state: p.state, photos });
+function listPhotos(category, slug) {
+  const dir = path.join(PHOTOS_DIR, category, slug);
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir).filter((f) => /\.jpg$/i.test(f)).sort()
+    .map((f) => `/photos/${category}/${slug}/${f}`);
 }
 
-const ts = `// AUTO-GENERATED by scripts/optimize-photos.mjs — do not edit by hand.
-export type PlaceGallery = { slug: string; place: string; state: string; photos: string[] };
+function writeData(file, type, rows) {
+  const ts = `// AUTO-GENERATED by scripts/optimize-photos.mjs — do not edit by hand.\n${type}\n\nexport const ${file.varName} = ${JSON.stringify(rows, null, 2)};\n`;
+  fs.writeFileSync(path.join(ROOT, "src/data", file.name), ts);
+  console.log(`Wrote src/data/${file.name} (${rows.length})`);
+}
 
-export const TRAVEL_GALLERIES: PlaceGallery[] = ${JSON.stringify(galleries, null, 2)};
-`;
-fs.writeFileSync(path.join(ROOT, "src/data/travel-galleries.ts"), ts);
-console.log(`Wrote src/data/travel-galleries.ts (${galleries.length} galleries)`);
+for (const s of TRAVEL) await processSet("travel", s);
+for (const s of MOVEMENT) await processSet("movement", s);
+
+const travelRows = TRAVEL
+  .map((s) => ({ slug: s.slug, place: s.place, state: s.state, photos: listPhotos("travel", s.slug) }))
+  .filter((r) => r.photos.length);
+writeData(
+  { name: "travel-galleries.ts", varName: "TRAVEL_GALLERIES" },
+  "export type PlaceGallery = { slug: string; place: string; state: string; photos: string[] };",
+  travelRows,
+);
+
+const movementRows = MOVEMENT
+  .map((s) => ({ slug: s.slug, title: s.title, photos: listPhotos("movement", s.slug) }))
+  .filter((r) => r.photos.length);
+writeData(
+  { name: "movement-galleries.ts", varName: "MOVEMENT_GALLERIES" },
+  "export type MovementGallery = { slug: string; title: string; photos: string[] };",
+  movementRows,
+);

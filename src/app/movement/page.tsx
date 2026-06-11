@@ -1,4 +1,6 @@
 import StravaFeed from "@/components/movement/StravaFeed";
+import PhotoGallery from "@/components/media/PhotoGallery";
+import { MOVEMENT_GALLERIES } from "@/data/movement-galleries";
 
 export const metadata = { title: "Movement — Mariprasad" };
 
@@ -24,6 +26,13 @@ export default function MovementPage() {
           </li>
         ))}
       </ul>
+
+      {MOVEMENT_GALLERIES.map((g) => (
+        <section key={g.slug} className="mt-16">
+          <h2 className="text-2xl text-ink">{g.title}</h2>
+          <div className="mt-5"><PhotoGallery photos={g.photos} alt={g.title} /></div>
+        </section>
+      ))}
     </div>
   );
 }
