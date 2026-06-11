@@ -1,0 +1,48 @@
+// Live "saved places" feed from Airtable. Connect-to-activate: returns [] until
+// AIRTABLE_TOKEN is set (read-only token). Base id is not secret.
+const BASE_ID = "appOjONooljd6cwwi";
+const TABLE = "Places";
+
+export type Place = {
+  id: string;
+  name: string;
+  region?: string;
+  food?: string;
+  note?: string;
+  rating?: number;
+  lat?: number;
+  lng?: number;
+  date?: string;
+};
+
+export async function getSavedPlaces(limit = 60): Promise<Place[]> {
+  const token = process.env.AIRTABLE_TOKEN;
+  if (!token) return [];
+  const url =
+    `https://api.airtable.com/v0/${BASE_ID}/${TABLE}` +
+    `?sort%5B0%5D%5Bfield%5D=Date&sort%5B0%5D%5Bdirection%5D=desc&maxRecords=${limit}`;
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return ((data.records ?? []) as any[])
+      .map((r): Place => ({
+        id: String(r.id),
+        name: String(r.fields?.Name ?? ""),
+        region: r.fields?.Region ? String(r.fields.Region) : undefined,
+        food: r.fields?.Food ? String(r.fields.Food) : undefined,
+        note: r.fields?.Note ? String(r.fields.Note) : undefined,
+        rating: typeof r.fields?.Rating === "number" ? r.fields.Rating : undefined,
+        lat: typeof r.fields?.Lat === "number" ? r.fields.Lat : undefined,
+        lng: typeof r.fields?.Lng === "number" ? r.fields.Lng : undefined,
+        date: r.fields?.Date ? String(r.fields.Date) : undefined,
+      }))
+      .filter((p) => p.name);
+  } catch {
+    return [];
+  }
+}
