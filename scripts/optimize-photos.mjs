@@ -57,6 +57,7 @@ const BAKING = [
   { slug: "sweet-bread", src: "C:/Users/ASUS/Downloads", files: [
     "WhatsApp Image 2026-06-11 at 6.00.25 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 5.55.44 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 5.59.29 PM.jpeg", // same dough, less sugar/butter → rustic
   ] },
   { slug: "plantain-doughnuts", src: BAKE, files: [
     "WhatsApp Image 2026-06-11 at 2.53.22 PM.jpeg",
