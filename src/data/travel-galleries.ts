@@ -84,6 +84,21 @@ export const TRAVEL_GALLERIES: PlaceGallery[] = [
     ]
   },
   {
+    "slug": "kashmir",
+    "place": "Kashmir",
+    "state": "Jammu & Kashmir",
+    "photos": [
+      "/photos/travel/kashmir/kashmir-01.jpg",
+      "/photos/travel/kashmir/kashmir-02.jpg",
+      "/photos/travel/kashmir/kashmir-03.jpg",
+      "/photos/travel/kashmir/kashmir-04.jpg",
+      "/photos/travel/kashmir/kashmir-05.jpg",
+      "/photos/travel/kashmir/kashmir-06.jpg",
+      "/photos/travel/kashmir/kashmir-07.jpg",
+      "/photos/travel/kashmir/kashmir-08.jpg"
+    ]
+  },
+  {
     "slug": "westcoast-ka",
     "place": "Chikmagalur",
     "state": "Karnataka",
