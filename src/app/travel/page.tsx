@@ -1,5 +1,7 @@
 import IndiaMap from "@/components/map/IndiaMap";
+import PhotoGallery from "@/components/media/PhotoGallery";
 import { byZone, visitedCount } from "@/data/travel";
+import { TRAVEL_GALLERIES } from "@/data/travel-galleries";
 
 export const metadata = { title: "Travel — Mariprasad" };
 
@@ -32,6 +34,26 @@ export default function TravelPage() {
           )}
         </div>
       </div>
+
+      {TRAVEL_GALLERIES.length > 0 && (
+        <div className="mt-20">
+          <h2 className="text-4xl text-ink">Postcards</h2>
+          <p className="mt-2 text-ink-soft">A few frames from the road.</p>
+          <div className="mt-10 space-y-16">
+            {TRAVEL_GALLERIES.map((g) => (
+              <section key={g.slug}>
+                <div className="flex items-baseline gap-3">
+                  <h3 className="text-2xl text-ink">{g.place}</h3>
+                  <span className="label text-pine">{g.state}</span>
+                </div>
+                <div className="mt-5">
+                  <PhotoGallery photos={g.photos} alt={`${g.place}`} />
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
