@@ -42,8 +42,12 @@ export async function getSavedPlaces(limit = 60): Promise<Place[]> {
         savedAt: r.createdTime ? String(r.createdTime) : undefined,
       }))
       .filter((p) => p.name)
-      // Newest-saved first (the `Date` field is optional / for backfilled visits).
-      .sort((a, b) => (a.savedAt ?? "") < (b.savedAt ?? "") ? 1 : -1);
+      // Newest first by visit Date when set (backfill), else by when it was logged.
+      .sort((a, b) => {
+        const ka = a.date || a.savedAt || "";
+        const kb = b.date || b.savedAt || "";
+        return ka < kb ? 1 : -1;
+      });
   } catch {
     return [];
   }
