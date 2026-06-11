@@ -23,7 +23,7 @@ export async function getSavedPlaces(limit = 60): Promise<Place[]> {
   try {
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
-      next: { revalidate: 300 },
+      next: { revalidate: 1800 },
     });
     if (!res.ok) return [];
     const data = await res.json();
