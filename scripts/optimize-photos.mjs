@@ -51,12 +51,12 @@ const BAKING = [
     "WhatsApp Image 2026-06-11 at 2.53.34 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.29 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.33 PM.jpeg",
+    "WhatsApp Image 2026-06-11 at 2.53.27 PM.jpeg", // golden sandwich loaf (lives here only)
     "WhatsApp Image 2026-06-11 at 2.53.32 PM.jpeg",
   ] },
-  // Sweet Bread (cinnamon-roll dough): 2-loaf pull-apart cover + golden sandwich.
+  // Sweet Bread (cinnamon-roll dough): 2-loaf pull-apart cover + the rustic version.
   { slug: "sweet-bread", src: "C:/Users/ASUS/Downloads", files: [
     "WhatsApp Image 2026-06-11 at 6.00.25 PM.jpeg",
-    "WhatsApp Image 2026-06-11 at 5.55.44 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 5.59.29 PM.jpeg", // same dough, less sugar/butter → rustic
   ] },
   { slug: "plantain-doughnuts", src: BAKE, files: [
