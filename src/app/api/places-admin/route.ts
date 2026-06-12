@@ -76,5 +76,36 @@ export async function POST(req: Request) {
     return Response.json({ patched: records.length });
   }
 
+  if (body.action === "ensure-approx-field") {
+    // One-time schema fix: add the Approx checkbox if it doesn't exist yet.
+    // Needs schema scope on the token; reports Airtable's error if not.
+    const metaRes = await fetch(`https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`, {
+      headers,
+      cache: "no-store",
+    });
+    if (!metaRes.ok) return new Response(await metaRes.text(), { status: 502 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const table = ((await metaRes.json()).tables ?? []).find((t: any) => t.name === TABLE);
+    if (!table) return new Response("Places table not found", { status: 502 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (table.fields?.some((f: any) => f.name === "Approx")) {
+      return Response.json({ ok: true, existed: true });
+    }
+    const created = await fetch(
+      `https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables/${table.id}/fields`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          name: "Approx",
+          type: "checkbox",
+          options: { icon: "check", color: "grayBright" },
+        }),
+      }
+    );
+    if (!created.ok) return new Response(await created.text(), { status: 502 });
+    return Response.json({ ok: true, created: true });
+  }
+
   return new Response("Unknown action", { status: 400 });
 }
