@@ -36,6 +36,29 @@ describe("isInIndia", () => {
   });
 });
 
+describe("nearbyPlaces", () => {
+  const blr = { lat: 12.9716, lng: 77.5946 }; // city center
+  const spots: Place[] = [
+    place({ id: "close", name: "Close café", tag: "on the list", lat: 12.978, lng: 77.6 }),
+    place({ id: "far", name: "Mysuru spot", tag: "on the list", lat: 12.2958, lng: 76.6394 }),
+    place({ id: "visited", name: "Visited place", lat: 12.975, lng: 77.598 }), // no tag
+    place({ id: "nocoords", name: "Unpinned", tag: "on the list" }),
+  ];
+  it("returns only tagged, pinned places within range, nearest first", async () => {
+    const { nearbyPlaces } = await import("./pins");
+    const near = nearbyPlaces(spots, blr.lat, blr.lng);
+    expect(near.map((p) => p.id)).toEqual(["close"]);
+    expect(near[0].km).toBeLessThan(1.5);
+  });
+  it("respects maxKm", async () => {
+    const { nearbyPlaces } = await import("./pins");
+    expect(nearbyPlaces(spots, blr.lat, blr.lng, { maxKm: 200 }).map((p) => p.id)).toEqual([
+      "close",
+      "far",
+    ]);
+  });
+});
+
 describe("clusterPins", () => {
   const pts: PinPoint[] = [
     { x: 100, y: 100, place: place({ id: "a" }) },

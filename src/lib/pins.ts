@@ -20,6 +20,32 @@ export function popupLine(p: Place): string {
     : "Saved on the old maps — still on the list.";
 }
 
+// Great-circle distance — good enough at city scale for "what's near me".
+export function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const rad = Math.PI / 180;
+  const dLat = (bLat - aLat) * rad;
+  const dLng = (bLng - aLng) * rad;
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(aLat * rad) * Math.cos(bLat * rad) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(h));
+}
+
+// Closest wishlist saves to a point — powers /api/nearby ("Saved near me?").
+export function nearbyPlaces(
+  places: Place[],
+  lat: number,
+  lng: number,
+  { maxKm = 25, limit = 5 }: { maxKm?: number; limit?: number } = {}
+): Array<Place & { km: number }> {
+  return places
+    .filter((p) => p.tag && typeof p.lat === "number" && typeof p.lng === "number")
+    .map((p) => ({ ...p, km: haversineKm(lat, lng, p.lat!, p.lng!) }))
+    .filter((p) => p.km <= maxKm)
+    .sort((a, b) => a.km - b.km)
+    .slice(0, limit);
+}
+
 export type PinPoint = { x: number; y: number; place: Place };
 export type Cluster = { x: number; y: number; members: PinPoint[] };
 
