@@ -15,6 +15,7 @@ export type Place = {
   date?: string;
   savedAt?: string; // Airtable createdTime — used for ordering
   tag?: string; // "on the list" | "loved it" | "been" — wishlist saves from old maps
+  approx?: boolean; // geocoder fell back to a state-centroid guess
 };
 
 export async function getSavedPlaces(): Promise<Place[]> {
@@ -49,6 +50,7 @@ export async function getSavedPlaces(): Promise<Place[]> {
         date: r.fields?.Date ? String(r.fields.Date) : undefined,
         savedAt: r.createdTime ? String(r.createdTime) : undefined,
         tag: r.fields?.Tag ? String(r.fields.Tag) : undefined,
+        approx: r.fields?.Approx === true || undefined,
       }))
       .filter((p) => p.name)
       // Newest first by visit Date when set (backfill), else by when it was logged.
