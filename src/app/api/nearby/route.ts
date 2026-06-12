@@ -33,13 +33,28 @@ export async function POST(req: Request) {
 
   const places = await getSavedPlaces();
   const near = nearbyPlaces(places, lat, lng);
-  if (near.length === 0) {
-    return new Response("Nothing saved within 25 km — uncharted territory 🎉");
-  }
-  const lines = near.map((p) => {
+
+  const label = (p: (typeof near)[number]) => {
     const mark = p.tag === "loved it" ? "♥ " : "";
     const dist = p.km < 1 ? `${Math.round(p.km * 1000)} m` : `${p.km.toFixed(1)} km`;
     return `${mark}${p.name} — ${dist}${p.region ? ` (${p.region})` : ""}${p.approx ? " ~" : ""}`;
-  });
-  return new Response(lines.join("\n"));
+  };
+
+  // mode=choices → { "label": "google-maps-url" } for the Shortcut's
+  // Choose-from-List → Open URL flow (tap a place, land in the Maps app).
+  if (body.mode === "choices") {
+    const out: Record<string, string> = {};
+    for (const p of near) {
+      // Search by name + region: works for approximate pins too, and lands on
+      // the real listing (reviews, hours) rather than a bare dropped pin.
+      const q = encodeURIComponent(`${p.name}${p.region ? `, ${p.region}` : ""}`);
+      out[label(p)] = `https://www.google.com/maps/search/?api=1&query=${q}`;
+    }
+    return Response.json(out);
+  }
+
+  if (near.length === 0) {
+    return new Response("Nothing saved within 25 km — uncharted territory 🎉");
+  }
+  return new Response(near.map(label).join("\n"));
 }
