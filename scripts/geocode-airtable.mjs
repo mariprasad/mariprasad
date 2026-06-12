@@ -102,6 +102,11 @@ const todo = rows
 console.log(`Rows: ${rows.length} total, ${todo.length} need coordinates${DRY ? " (dry run)" : ""}\n`);
 
 // ---- geocode ----
+// Approximate pins live in the repo, not Airtable (the token can't add fields).
+// A pin counts as approximate only while its Airtable coords still equal the
+// computed guess — hand-fixing Lat/Lng in Airtable un-flags it automatically.
+const APPROX_PATH = `${ROOT}/src/data/approx-places.json`;
+const approxMap = fs.existsSync(APPROX_PATH) ? JSON.parse(fs.readFileSync(APPROX_PATH, "utf8")) : {};
 const updates = [];
 let hits = 0, approx = 0, unpinned = 0;
 for (const r of todo) {
@@ -128,7 +133,8 @@ for (const r of todo) {
   } else if (st) {
     approx++;
     const p = approxPoint(st.centroid, Name);
-    fields = { Lat: p[1], Lng: p[0], Approx: true };
+    fields = { Lat: p[1], Lng: p[0] };
+    approxMap[r.id] = [fields.Lat, fields.Lng]; // site flags these as "≈"
   } else {
     unpinned++; // no hit and no state to anchor to — leave blank
     console.log(`  ∅ unpinned: ${Name} [${Region || "no region"}]`);
@@ -139,6 +145,10 @@ for (const r of todo) {
 }
 
 console.log(`\nGeocoded ${hits} · approximate ${approx} · unpinned ${unpinned}`);
+if (!DRY) {
+  fs.writeFileSync(APPROX_PATH, JSON.stringify(approxMap, null, 1));
+  console.log(`Approx map → src/data/approx-places.json (${Object.keys(approxMap).length} entries — commit this)`);
+}
 
 // ---- write back ----
 if (!DRY && updates.length) {
