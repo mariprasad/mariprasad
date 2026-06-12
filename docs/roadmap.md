@@ -8,10 +8,12 @@ A running list of everything we said "let's do this later." We'll work through i
 - **Herping & frogs** — "the wild I share my corner with." Small nature section or a field-note article. One workshop so far; grow it over time.
 
 ## Living map & check-ins (Airtable)
+- **Wishlist roulette** — every few weeks, randomly pick one "on the list" place and nudge Mari (email/notification) to actually go. (Parked 2026-06-12.)
 - **Give check-ins their own home** — pull "Lately saved" out of `/travel` into its own page (or the homepage) so you can see *all* your check-ins, not just a strip.
-- **Interactive India map** — hover/tap a region → what you ate there, why you loved it, a fact, a photo peek. (Food/notes can come from the Airtable check-ins, grouped by region.)
 - **Photos per check-in** — attach a photo when logging a place (Airtable attachments need a hosted URL from a Shortcut, so this needs a workaround).
-- **Google Maps history backfill** — one-time Google Takeout export (Saved/Reviews from web, Timeline from the Maps phone app) → bulk-import past places into the Airtable base. No paid Maps API needed.
+- **Hand-fix approximate pins** — hollow pins on the map are state-centroid guesses; correct the ones that matter by filling real Lat/Lng in Airtable.
+- ~~Interactive India map~~ → **shipped 2026-06-12** as the zoomable pin map on `/travel`.
+- ~~Google Maps history backfill~~ → **shipped 2026-06-12** (reviews + 56 saved lists → Airtable; `parse-takeout-places.mjs`, `parse-saved-lists.mjs`, `geocode-airtable.mjs`).
 
 ## Ask Mari
 - **Answer in Mari's real voice** — add a style note + 3–5 few-shot examples of how you'd actually answer, into the grounding. Needs you to write a few sample answers.
