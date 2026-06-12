@@ -20,6 +20,7 @@ A running list of everything we said "let's do this later." We'll work through i
 - **Rate-limit `/api/ask`** before sharing the site widely — it's a public, OpenAI-backed endpoint (e.g. Vercel KV / Upstash).
 
 ## Look & feel
+- **Theme refresh v2 — "Chettinad floor" background** (parked 2026-06-12). Mari finds the current terrazzo-green background a bit boring. Reference: https://flysoar.ai/ (likes its background treatment — grab its palette/texture with a browser when we pick this up). Direction: build the background from **Athangudi tile colors** + the **texture of red oxide floors from Chettinad**; we already use mosaic tiles (origin unknown). Could pair with the existing "Athangudi-tile accent strips" idea below.
 - **Floating bubble / constellation nav** — the "Mari sun + section bubbles" navigation, as a homepage showpiece. (Parked; bar stays simple for now.)
 - **Per-section accent colors** — give each section its own tribal-bold colour (baking = mustard, travel = teal, movement = green, movies = purple…) to push the bold/folk vibe.
 - **Athangudi-tile accent strips** — tile motif in the header, dividers, footer (the Chettinad nod), on top of the terrazzo-green base.
