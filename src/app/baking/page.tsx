@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getAllRecipes, getAllNotes } from "@/lib/content";
+import WaitingBaker from "@/components/baking/WaitingBaker";
 
 export const metadata = { title: "Baking — Mariprasad" };
 
@@ -20,7 +21,7 @@ export default function BakingIndex() {
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width:640px) 100vw, 33vw" />
               ) : (
-                <span className="label text-pine">{r.meta.status ?? "Photos coming"}</span>
+                <WaitingBaker label={r.meta.status ?? "Photos coming"} />
               )}
             </div>
             <h2 className="mt-3 text-xl text-ink">{r.meta.title}</h2>
