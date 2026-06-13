@@ -75,14 +75,30 @@ async function nominatim(q, countrycode) {
   return out;
 }
 
-// Deterministic small offset so approximate pins don't stack on the centroid.
+// Deterministic offset so approximate pins don't stack on the same anchor.
+// `spread` is the [min,max] radius in degrees — tight around a known city,
+// wide around a whole-state centroid.
 const hash = (s) => [...s].reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
-const approxPoint = (centroid, name) => {
+const approxPoint = (anchor, name, [lo, hi]) => {
   const h = hash(name);
   const angle = ((h % 360) * Math.PI) / 180;
-  const r = 0.15 + (Math.abs(h >> 9) % 20) / 100; // 0.15–0.35°
-  return [centroid[0] + r * Math.cos(angle), centroid[1] + r * Math.sin(angle)];
+  const r = lo + (Math.abs(h >> 9) % 100) / 100 * (hi - lo);
+  return [anchor[0] + r * Math.cos(angle), anchor[1] + r * Math.sin(angle)];
 };
+
+// Geocode the region's city (e.g. "Bengaluru, Karnataka") — cities are always
+// in Nominatim, so an unfound place still lands near the right town, not the
+// middle of the state. Cached via the same nominatim() store.
+const cityCache = new Map();
+async function cityAnchor(region, cc, bounds) {
+  if (!region) return null;
+  const q = region.replace(/^Around\s+/i, "").trim();
+  if (cityCache.has(q)) return cityCache.get(q);
+  const cands = await nominatim(q, cc);
+  const pt = cands.find((c) => !bounds || inBounds(c, bounds)) ?? null;
+  cityCache.set(q, pt);
+  return pt;
+}
 
 // ---- load rows missing coordinates ----
 async function admin(payload) {
@@ -95,18 +111,27 @@ async function admin(payload) {
   return res.json();
 }
 
-const { records: rows } = await admin({ action: "list" });
-const todo = rows
-  .filter((r) => r.name && typeof r.lat !== "number")
-  .slice(0, LIMIT);
-console.log(`Rows: ${rows.length} total, ${todo.length} need coordinates${DRY ? " (dry run)" : ""}\n`);
-
-// ---- geocode ----
+// ---- approx map ----
 // Approximate pins live in the repo, not Airtable (the token can't add fields).
 // A pin counts as approximate only while its Airtable coords still equal the
 // computed guess — hand-fixing Lat/Lng in Airtable un-flags it automatically.
 const APPROX_PATH = `${ROOT}/src/data/approx-places.json`;
 const approxMap = fs.existsSync(APPROX_PATH) ? JSON.parse(fs.readFileSync(APPROX_PATH, "utf8")) : {};
+const REAPPROX = process.argv.includes("--reapprox"); // re-geocode existing approx pins
+const stillApprox = (r) => {
+  const g = approxMap[r.id];
+  return g && typeof r.lat === "number" && Math.abs(r.lat - g[0]) < 1e-6 && Math.abs(r.lng - g[1]) < 1e-6;
+};
+
+const { records: rows } = await admin({ action: "list" });
+const todo = rows
+  // Missing coords always; with --reapprox also redo untouched approximate pins
+  // (skips any the user has since hand-corrected in Airtable).
+  .filter((r) => r.name && (typeof r.lat !== "number" || (REAPPROX && stillApprox(r))))
+  .slice(0, LIMIT);
+console.log(`Rows: ${rows.length} total, ${todo.length} to geocode${REAPPROX ? " (reapprox)" : ""}${DRY ? " (dry run)" : ""}\n`);
+
+// ---- geocode ----
 const updates = [];
 let hits = 0, approx = 0, unpinned = 0;
 for (const r of todo) {
@@ -126,21 +151,29 @@ for (const r of todo) {
     if (point) break;
   }
 
-  let fields;
+  let fields, kind;
   if (point) {
     hits++;
+    kind = "✓";
     fields = { Lat: point[1], Lng: point[0] };
-  } else if (st) {
-    approx++;
-    const p = approxPoint(st.centroid, Name);
-    fields = { Lat: p[1], Lng: p[0] };
-    approxMap[r.id] = [fields.Lat, fields.Lng]; // site flags these as "≈"
   } else {
-    unpinned++; // no hit and no state to anchor to — leave blank
-    console.log(`  ∅ unpinned: ${Name} [${Region || "no region"}]`);
-    continue;
+    // No exact hit — anchor on the region's city if we can find one, else the
+    // state centroid. Tight offset around a city, wide around a state.
+    const city = await cityAnchor(Region, cc, bounds);
+    const anchor = city ?? st?.centroid ?? null;
+    if (anchor) {
+      approx++;
+      kind = city ? "≈city" : "≈state";
+      const p = approxPoint(anchor, Name, city ? [0.004, 0.025] : [0.15, 0.35]);
+      fields = { Lat: p[1], Lng: p[0] };
+      approxMap[r.id] = [fields.Lat, fields.Lng]; // site flags these as "≈"
+    } else {
+      unpinned++; // no hit and nothing to anchor to — leave blank
+      console.log(`  ∅ unpinned: ${Name} [${Region || "no region"}]`);
+      continue;
+    }
   }
-  if (DRY) console.log(`  ${fields.Approx ? "≈" : "✓"} ${Name} [${Region}] → ${fields.Lat.toFixed(4)}, ${fields.Lng.toFixed(4)}`);
+  if (DRY) console.log(`  ${kind} ${Name} [${Region}] → ${fields.Lat.toFixed(4)}, ${fields.Lng.toFixed(4)}`);
   updates.push({ id: r.id, fields });
 }
 
