@@ -1,9 +1,10 @@
 "use client";
 
-// Interactive Mapbox map that plays a route back: the line draws itself while a
-// dot traces the path. Mapbox GL is browser-only, so it's imported inside the
-// effect. Falls back to the static route image where WebGL is unavailable, and
-// honours reduced-motion (shows the full route, no animation).
+// Route map for the modal. A static Mapbox image is always shown as the base
+// (guaranteed to render), and the interactive Mapbox GL map fades in ON TOP only
+// once it has actually painted a frame — so a WebGL hiccup never leaves a blank
+// box. When GL works you get the cinematic playback: the line draws itself while
+// a dot traces the path. Honours reduced-motion.
 import { useEffect, useRef, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { decodePolyline, toLngLat, staticRouteUrl } from "@/lib/strava-map";
@@ -23,36 +24,36 @@ export default function RouteMap({ polyline, color = "#b0492c" }: { polyline: st
   const mapRef = useRef<any>(null);
   const roRef = useRef<ResizeObserver | null>(null);
   const rafRef = useRef<number | null>(null);
-  const [mode, setMode] = useState<"loading" | "gl" | "static">("loading");
-  const [ready, setReady] = useState(false);
+  const [useGl] = useState(() => typeof window !== "undefined" && hasWebGL());
+  const [glPainted, setGlPainted] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const [replayKey, setReplayKey] = useState(0);
 
   useEffect(() => {
+    if (!useGl) return;
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     const coords = toLngLat(decodePolyline(polyline));
-    if (!token || coords.length < 2) { setMode("static"); return; }
-    if (!hasWebGL()) { setMode("static"); return; }
-    setMode("gl");
+    if (!token || coords.length < 2) return;
 
     let cancelled = false;
+    let played = false;
     (async () => {
       const mapboxgl = (await import("mapbox-gl")).default;
       if (cancelled || !holder.current) return;
       mapboxgl.accessToken = token;
-      // Start centred on the route's first point; fit the full route AFTER the
-      // container is sized on load — passing bounds to the constructor while the
-      // modal is still 0-size yields a blank map.
       const map = new mapboxgl.Map({
         container: holder.current,
         style: "mapbox://styles/mapbox/outdoors-v12",
         center: coords[0] as [number, number],
         zoom: 12,
-        cooperativeGestures: true, // scroll the page through the map; ctrl/2-finger to zoom
+        cooperativeGestures: true,
       });
       mapRef.current = map;
       map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+      map.on("error", (e: { error?: { message?: string } }) => {
+        if (!cancelled) setErr(e?.error?.message || "map failed to load");
+      });
 
-      // Keep the canvas sized to the modal as it lays out / resizes.
       const ro = new ResizeObserver(() => map.resize());
       ro.observe(holder.current);
       roRef.current = ro;
@@ -77,8 +78,13 @@ export default function RouteMap({ polyline, color = "#b0492c" }: { polyline: st
         map.addSource("head", { type: "geojson", data: point(coords[0]) });
         map.addLayer({ id: "head", type: "circle", source: "head",
           paint: { "circle-radius": 7, "circle-color": "#0f6e56", "circle-stroke-width": 2.5, "circle-stroke-color": "#fff" } });
-        setReady(true);
-        playback(map, coords);
+      });
+
+      // 'idle' = the map has finished its first real render → safe to reveal.
+      map.on("idle", () => {
+        if (cancelled) return;
+        setGlPainted(true);
+        if (!played) { played = true; playback(map, coords); }
       });
     })();
 
@@ -108,25 +114,31 @@ export default function RouteMap({ polyline, color = "#b0492c" }: { polyline: st
       roRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
-      setReady(false);
+      setGlPainted(false);
     };
-  }, [polyline, color, replayKey]);
+  }, [polyline, color, useGl, replayKey]);
 
   return (
     <div className="relative h-72 w-full overflow-hidden rounded-xl sm:h-96">
-      {mode === "static" ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={staticRouteUrl(polyline, { w: 900, h: 600 })} alt="Route map" className="absolute inset-0 h-full w-full object-cover" />
-      ) : (
-        <div ref={holder} className="absolute inset-0" />
+      {/* base: static route image — always renders */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={staticRouteUrl(polyline, { w: 900, h: 600 })} alt="Route map" className="absolute inset-0 h-full w-full object-cover" />
+      {/* interactive GL map, revealed only once it has actually painted */}
+      {useGl && !err && (
+        <div ref={holder} className={`absolute inset-0 transition-opacity duration-500 ${glPainted ? "opacity-100" : "opacity-0"}`} />
       )}
-      {mode === "gl" && ready && (
+      {glPainted && !err && (
         <button
           onClick={() => setReplayKey((k) => k + 1)}
           className="absolute bottom-3 left-3 z-10 rounded-full border border-ink/15 bg-paper/90 px-3 py-1 label text-ink hover:bg-paper"
         >
           ↻ replay
         </button>
+      )}
+      {err && (
+        <p className="absolute bottom-2 right-2 z-10 max-w-[80%] truncate rounded bg-ink/70 px-2 py-1 text-xs text-paper">
+          live map off: {err}
+        </p>
       )}
     </div>
   );
