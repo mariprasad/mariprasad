@@ -21,6 +21,7 @@ export default function RouteMap({ polyline, color = "#b0492c" }: { polyline: st
   const holder = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
+  const roRef = useRef<ResizeObserver | null>(null);
   const rafRef = useRef<number | null>(null);
   const [mode, setMode] = useState<"loading" | "gl" | "static">("loading");
   const [ready, setReady] = useState(false);
@@ -38,22 +39,33 @@ export default function RouteMap({ polyline, color = "#b0492c" }: { polyline: st
       const mapboxgl = (await import("mapbox-gl")).default;
       if (cancelled || !holder.current) return;
       mapboxgl.accessToken = token;
+      // Start centred on the route's first point; fit the full route AFTER the
+      // container is sized on load — passing bounds to the constructor while the
+      // modal is still 0-size yields a blank map.
       const map = new mapboxgl.Map({
         container: holder.current,
         style: "mapbox://styles/mapbox/outdoors-v12",
-        bounds: coords.reduce(
-          (b, c) => b.extend(c as [number, number]),
-          new mapboxgl.LngLatBounds(coords[0] as [number, number], coords[0] as [number, number])
-        ),
-        fitBoundsOptions: { padding: 36 },
+        center: coords[0] as [number, number],
+        zoom: 12,
         cooperativeGestures: true, // scroll the page through the map; ctrl/2-finger to zoom
       });
       mapRef.current = map;
       map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
 
+      // Keep the canvas sized to the modal as it lays out / resizes.
+      const ro = new ResizeObserver(() => map.resize());
+      ro.observe(holder.current);
+      roRef.current = ro;
+
+      const bounds = coords.reduce(
+        (b, c) => b.extend(c as [number, number]),
+        new mapboxgl.LngLatBounds(coords[0] as [number, number], coords[0] as [number, number])
+      );
+
       map.on("load", () => {
         if (cancelled) return;
         map.resize();
+        map.fitBounds(bounds, { padding: 36, duration: 0, maxZoom: 16 });
         map.addSource("full", { type: "geojson", data: line(coords) });
         map.addLayer({ id: "full", type: "line", source: "full",
           paint: { "line-color": color, "line-width": 3, "line-opacity": 0.22 },
@@ -92,6 +104,8 @@ export default function RouteMap({ polyline, color = "#b0492c" }: { polyline: st
     return () => {
       cancelled = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      roRef.current?.disconnect();
+      roRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
       setReady(false);
