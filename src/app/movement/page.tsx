@@ -1,6 +1,8 @@
-import StravaFeed from "@/components/movement/StravaFeed";
+import MovementStats from "@/components/movement/MovementStats";
+import RouteExplorer from "@/components/movement/RouteExplorer";
 import PhotoGallery from "@/components/media/PhotoGallery";
 import { MOVEMENT_GALLERIES } from "@/data/movement-galleries";
+import { STRAVA_ROUTES } from "@/data/strava";
 
 export const metadata = { title: "Movement — Mariprasad" };
 
@@ -17,8 +19,18 @@ export default function MovementPage() {
       <p className="mt-3 text-ink-soft max-w-xl">
         Bowling keeps me honest, the mountains keep me humble, and running keeps me going.
       </p>
-      <div className="mt-10"><StravaFeed /></div>
-      <ul className="mt-6 space-y-5">
+      <div className="mt-10"><MovementStats /></div>
+
+      <section className="mt-12">
+        <h2 className="text-2xl text-ink">Every route, replayed</h2>
+        <p className="mt-1 text-ink-soft">
+          {STRAVA_ROUTES.length} runs, rides and hikes on the map — tap one to watch it draw itself.
+        </p>
+        <div className="mt-6"><RouteExplorer routes={STRAVA_ROUTES} /></div>
+      </section>
+
+      <h2 className="mt-16 text-2xl text-ink">Milestones</h2>
+      <ul className="mt-4 space-y-5">
         {TREKS.map((t) => (
           <li key={t.name} className="rounded-xl border border-pine/30 bg-pine/5 p-5">
             <p className="text-xl font-display text-ink">{t.name}</p>
