@@ -3,6 +3,7 @@
 A running list of everything we said "let's do this later." We'll work through it together. Newest thoughts at the top of each group.
 
 ## Content sections (need content/photos from Mari)
+- **Kajjaya — Deepawali sweet: STORY SHIPPED 2026-06-16** as a baking note at `src/content/notes/kajjaya.mdx` (`/notes/kajjaya`) — the family story (mum's crunchy version, grandpa's soft-with-mashed-banana, the big Diwali batch shared round the neighbourhood for ~a month). **Still parked:** Mari to send the (tricky) **making process** — then either expand the note or promote it to a full Kajjaya recipe (the bench photo `DSCF0546.jpg` would be the cover).
 - **Pencil sketches** — mostly portrait sketches → its own gallery section (same photo pipeline as travel).
 - **Farming** — a section: a line on what/why you farm + photos.
 - **Herping & frogs** — "the wild I share my corner with." Small nature section or a field-note article. One workshop so far; grow it over time.
@@ -26,6 +27,7 @@ A running list of everything we said "let's do this later." We'll work through i
 - **Athangudi-tile accent strips** — tile motif in the header, dividers, footer (the Chettinad nod), on top of the terrazzo-green base.
 
 ## Connect-to-activate (when you have the accounts/auth)
+- **Apple Health on the site** (steps / resting HR / sleep / move) — parked 2026-06-15. Apple Health has **no web API** (on-device only, by design), so the phone must *push* the data out. Reuse the `/api/log-place` pattern: an iOS **Shortcut automation** reads Health samples and POSTs to a new `/api/log-health` route (LOG_SECRET-guarded) → store (Airtable or similar) → site reads it. Two parts, same shape as the travel data: **backfill history** by parsing the one-time Health "Export All Health Data" `export.xml` (like `parse-takeout-places.mjs`), then **live** daily appends via the Shortcut. No Apple Developer account / native app / cost needed. Watch metrics ride along via the iPhone Health app. Strava already covers workouts/runs — Health adds the everyday stuff. Open Qs (Mari to decide): which metrics, auto-daily vs manual.
 - **Strava feed** (Movement) — add `STRAVA_*` env vars + do the one-time OAuth.
 - **Spotify now-playing** (footer) — add `SPOTIFY_*` env vars + OAuth.
 - **GitHub live activity** — deferred (account is sparse for now).

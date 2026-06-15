@@ -13,6 +13,7 @@ export type RecipeMeta = {
   cover?: string;
   photos?: string[];
   status?: string; // e.g. "Next goal" — shown on the card when there's no cover yet
+  cutout?: boolean; // cover is a transparent PNG → float it with a soft shadow instead of cropping to fill
 };
 
 export type Recipe = { slug: string; meta: RecipeMeta; content: string };

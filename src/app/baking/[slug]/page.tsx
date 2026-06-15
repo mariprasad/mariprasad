@@ -19,8 +19,14 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
       <p className="label text-terracotta">{`${meta.proofTime} proof${meta.difficulty ? ` · ${meta.difficulty}` : ""}`}</p>
       <h1 className="mt-3 text-4xl text-ink">{meta.title}</h1>
       {meta.cover && (
-        <div className="relative mt-6 aspect-[3/2] overflow-hidden rounded-xl">
-          <Image src={meta.cover} alt={meta.title} fill className="object-cover" sizes="100vw" />
+        <div className={meta.cutout
+          ? "relative mt-6 aspect-[3/2] grid place-items-center"
+          : "relative mt-6 aspect-[3/2] overflow-hidden rounded-xl"}>
+          <Image src={meta.cover} alt={meta.title} fill
+            className={meta.cutout
+              ? "object-contain p-2 drop-shadow-[0_6px_8px_rgba(35,48,38,0.20)] drop-shadow-[0_22px_26px_rgba(35,48,38,0.28)]"
+              : "object-cover"}
+            sizes="100vw" />
         </div>
       )}
       <div className="prose prose-stone mt-8 max-w-none text-ink">

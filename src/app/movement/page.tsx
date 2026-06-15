@@ -2,7 +2,8 @@ import MovementStats from "@/components/movement/MovementStats";
 import RouteExplorer from "@/components/movement/RouteExplorer";
 import PhotoGallery from "@/components/media/PhotoGallery";
 import { MOVEMENT_GALLERIES } from "@/data/movement-galleries";
-import { STRAVA_ROUTES } from "@/data/strava";
+import PersonalBests from "@/components/movement/PersonalBests";
+import { STRAVA_ROUTES, STRAVA_RECORDS } from "@/data/strava";
 
 export const metadata = { title: "Movement — Mariprasad" };
 
@@ -20,6 +21,8 @@ export default function MovementPage() {
         Bowling keeps me honest, the mountains keep me humble, and running keeps me going.
       </p>
       <div className="mt-10"><MovementStats /></div>
+
+      {STRAVA_RECORDS.length > 0 && <PersonalBests records={STRAVA_RECORDS} routes={STRAVA_ROUTES} />}
 
       <section className="mt-12">
         <h2 className="text-2xl text-ink">Every route, replayed</h2>

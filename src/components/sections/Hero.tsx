@@ -1,9 +1,10 @@
 import { PROFILE } from "@/data/profile";
+import LocalConditions from "./LocalConditions";
 
 export default function Hero() {
   return (
     <section className="mx-auto max-w-5xl px-5 pt-24 pb-20">
-      <p className="label text-terracotta">{PROFILE.location} · slow-fermented since last July</p>
+      <p className="label text-terracotta">{PROFILE.location} <LocalConditions /></p>
       <h1 className="mt-6 text-5xl sm:text-7xl leading-[0.95] font-semibold text-ink">
         {PROFILE.name}
       </h1>

@@ -42,7 +42,16 @@ const CRICKET = [
 // Baking: photos referenced directly from recipe MDX frontmatter (no data file).
 // `files` is an explicit, ordered list (cover first) selected from the Bake folder.
 const BAKE = "C:/Users/ASUS/Downloads/Bake";
+const COOKING = "C:/Users/ASUS/Downloads/Cooking";
 const BAKING = [
+  // "From the bench" gallery on /baking — curated bread/bake shots only (no meat).
+  { slug: "bench", src: COOKING, files: [
+    "DSCF0863.jpg", "DSCF0680.jpg", "DSCF0443.jpg",
+    "DSCF0431.jpg", // tiramisu (Old Monk rum)
+    "DSCF0546.jpg", "DSCF0967.jpg", "DSCF0521.jpg",
+    "DSCF0524.jpg", "DSCF0538.jpg",
+    "DSCF0654.jpg", // burger on the rack (Mari's buns)
+  ] },
   { slug: "semi-sourdough", src: BAKE, files: [
     "WhatsApp Image 2026-06-11 at 2.58.27 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.41 PM.jpeg",
