@@ -1,4 +1,4 @@
-import { FEATURED, PROJECTS, EXPERIENCE, RESUME_URL } from "@/data/work";
+import { PROJECTS, EXPERIENCE, RESUME_URL } from "@/data/work";
 import Link from "next/link";
 import { getNotesByCategory } from "@/lib/content";
 
@@ -17,23 +17,6 @@ export default function WorkPage() {
         A decade across frontend architecture, Node APIs, and — lately — LLM-powered features.
         <a href={RESUME_URL} className="text-terracotta underline ml-1">Résumé (PDF)</a>.
       </p>
-
-      <section className="mt-10 rounded-2xl border border-ink/10 bg-paper/40 p-7">
-        <p className="label text-pine">{FEATURED.company} · featured</p>
-        <h2 className="mt-2 text-2xl text-ink">{FEATURED.title}</h2>
-        <p className="mt-3 text-ink-soft">{FEATURED.blurb}</p>
-        <ul className="mt-4 flex flex-wrap gap-2">
-          {FEATURED.stack.map((s) => (
-            <li key={s} className="label rounded-full border border-ink/15 px-3 py-1 text-ink-soft">{s}</li>
-          ))}
-        </ul>
-        {FEATURED.url && (
-          <a href={FEATURED.url} target="_blank" rel="noopener noreferrer"
-            className="mt-5 inline-block label text-terracotta hover:underline">
-            See it live on {prettyHost(FEATURED.url)} →
-          </a>
-        )}
-      </section>
 
       <section className="mt-12">
         <h2 className="label text-pine">Selected work</h2>

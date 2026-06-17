@@ -9,15 +9,6 @@ export type Project = {
   url?: string; // only set when the work is publicly viewable
 };
 
-export const FEATURED = {
-  title: "LLM Flight-Search Pipeline",
-  company: "Techtree Labs",
-  blurb:
-    "A server-side flight-search pipeline using the OpenAI API with JSON-schema structured outputs, Zod validation, and anti-hallucination grounding against a live airport API.",
-  stack: ["Next.js", "Node.js", "OpenAI API", "Zod", "PostgreSQL"],
-  url: "https://utravel.com",
-};
-
 // Selected work. Most of the last few years lives in private Azure DevOps repos,
 // so these are described rather than linked; `url` is set only where it's public.
 export const PROJECTS: Project[] = [
@@ -26,7 +17,7 @@ export const PROJECTS: Project[] = [
     org: "Techtree Labs",
     period: "2024 – present",
     blurb:
-      "Full-stack work across the travel platform — React/Next.js frontends and Node.js API routes — including the LLM flight-search pipeline featured above.",
+      "Full-stack work across the travel platform — React/Next.js frontends and Node.js API routes — plus an LLM flight-search pipeline (OpenAI structured outputs, Zod validation, grounded against a live airport API) that's still in the works, not yet live.",
     stack: ["Next.js", "Node.js", "OpenAI API", "PostgreSQL"],
     url: "https://utravel.com",
   },
@@ -58,7 +49,7 @@ export const PROJECTS: Project[] = [
 ];
 
 export const EXPERIENCE: Role[] = [
-  { company: "Techtree Labs", title: "Full-Stack / Founding Engineer", period: "Apr 2024 – present", blurb: "End-to-end React/Next.js + Node features for Karnataka Govt MGNREGA and utravel.com; shipped the LLM flight-search pipeline." },
+  { company: "Techtree Labs", title: "Full-Stack / Founding Engineer", period: "Apr 2024 – present", blurb: "End-to-end React/Next.js + Node features for Karnataka Govt MGNREGA and utravel.com; built an LLM flight-search pipeline (not yet live)." },
   { company: "YouKraft", title: "Tech Lead", period: "Sep 2021 – Dec 2022", blurb: "Marketplace platform with role-based admin, GraphQL APIs, Prisma + PostgreSQL, Next.js frontend." },
   { company: "Thrillark", title: "Frontend Developer", period: "Jan 2020 – May 2021", blurb: "Travel activity booking UIs with React + Sass." },
 ];

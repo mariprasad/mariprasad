@@ -1,6 +1,6 @@
 import { CRICKET } from "@/data/cricket";
 import { VISITED } from "@/data/travel";
-import { EXPERIENCE, PROJECTS, FEATURED } from "@/data/work";
+import { EXPERIENCE, PROJECTS } from "@/data/work";
 import { PROFILE } from "@/data/profile";
 import type { RawDoc } from "../types";
 
@@ -26,13 +26,6 @@ export async function collectTravel(): Promise<RawDoc[]> {
 }
 
 export async function collectWork(): Promise<RawDoc[]> {
-  const featured: RawDoc = {
-    id: "work:featured",
-    source: "work",
-    title: FEATURED.title,
-    text: `${FEATURED.title} at ${FEATURED.company}: ${FEATURED.blurb} Stack: ${FEATURED.stack.join(", ")}.`,
-    url: "/work",
-  };
   const projects: RawDoc[] = PROJECTS.map((p, i) => ({
     id: `work:project:${i}`,
     source: "work" as const,
@@ -47,7 +40,7 @@ export async function collectWork(): Promise<RawDoc[]> {
     text: `${r.title} at ${r.company} (${r.period}): ${r.blurb}`,
     url: "/work",
   }));
-  return [featured, ...projects, ...roles];
+  return [...projects, ...roles];
 }
 
 export async function collectMovement(): Promise<RawDoc[]> {

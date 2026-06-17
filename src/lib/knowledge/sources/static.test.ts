@@ -14,11 +14,11 @@ test("travel adapter lists visited regions", async () => {
   expect(doc.text).toMatch(/Karnataka/);
 });
 
-test("work adapter returns featured + projects + roles", async () => {
+test("work adapter returns projects + roles incl. the flight pipeline", async () => {
   const docs = await collectWork();
   expect(docs.length).toBeGreaterThan(3);
   expect(docs.every((d) => d.source === "work")).toBe(true);
-  expect(docs[0].text).toMatch(/Flight-Search/);
+  expect(docs.some((d) => /flight-search/i.test(d.text))).toBe(true);
 });
 
 test("movement adapter mentions the trek height", async () => {
