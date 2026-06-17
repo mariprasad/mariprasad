@@ -72,6 +72,10 @@ const BAKING = [
     "WhatsApp Image 2026-06-11 at 2.53.22 PM.jpeg",
     "WhatsApp Image 2026-06-11 at 2.53.21 PM.jpeg",
   ] },
+  // One-Day Sourdough crumb shots (the-inside = halved loaf, slice = single slice).
+  { slug: "one-day-sourdough", src: "C:/Users/ASUS/Downloads/the-inside", files: [
+    "the-inside.webp", "slice.webp",
+  ] },
 ];
 
 const isImage = (f) => /\.(jpe?g|png|heic)$/i.test(f);

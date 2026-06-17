@@ -8,11 +8,12 @@ export const metadata = { title: "Baking — Mariprasad" };
 // "From the bench" — real bakes since July 2024 (optimised into /photos/baking/bench).
 const BENCH = Array.from({ length: 10 }, (_, i) => `/photos/baking/bench/bench-${String(i + 1).padStart(2, "0")}.jpg`);
 
-// How I pick what to bake — each path links to the bake that fits it.
+// How I pick what to bake — a quick→slow ladder, each linking to the bake that fits.
 const CHOICES = [
-  { kind: "Sourdough", when: "Deep flavour, long shelf life, a more artisanal loaf.", recipe: "Three-Day Sourdough", href: "/baking/sourdough" },
-  { kind: "Yeast bread", when: "Quick results, a soft sandwich loaf, a consistent rise.", recipe: "Shokupan", href: "/baking/shokupan" },
-  { kind: "In-between", when: "A pinch of yeast, but run slow — the artisanal sourdough process.", recipe: "Semi-Sourdough", href: "/baking/semi-sourdough" },
+  { kind: "Soft & quick", when: "A pillowy sandwich loaf, same day — yeast, a consistent rise.", recipe: "Shokupan", href: "/baking/shokupan" },
+  { kind: "No starter", when: "Sourdough character from a long, slow proof and a pinch of yeast.", recipe: "Semi-Sourdough", href: "/baking/semi-sourdough" },
+  { kind: "Sourdough in a day", when: "A real wild-culture loaf, quick — using a store-bought dry starter.", recipe: "One-Day Sourdough", href: "/baking/one-day-sourdough" },
+  { kind: "The full ritual", when: "Deepest flavour and crumb — the three-day method, no shortcuts.", recipe: "Three-Day Sourdough", href: "/baking/sourdough" },
 ];
 
 export default function BakingIndex() {
@@ -50,7 +51,7 @@ export default function BakingIndex() {
       <section className="mt-16">
         <h2 className="text-3xl text-ink">Yeast or sourdough?</h2>
         <p className="mt-2 text-ink-soft max-w-xl">How I decide what to bake.</p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CHOICES.map((c) => (
             <Link key={c.kind} href={c.href} className="group block rounded-xl border border-pine/30 bg-pine/5 p-5 transition-colors hover:border-pine">
               <p className="label text-pine">{c.kind}</p>
