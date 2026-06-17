@@ -1,6 +1,6 @@
 export const PROFILE = {
   name: "Mariprasad Ramakrishna",
-  tagline: "likes to bowl fast and bake slow",
+  tagline: "still chasing pace, still waiting on dough",
   location: "Bengaluru, India",
   timezone: "Asia/Kolkata",
   coords: { lat: 12.9719, lon: 77.5937 }, // Bengaluru — for the live local-conditions line
