@@ -69,9 +69,15 @@ Content-Type: application/x-www-form-urlencoded
 secret=<LOG_SECRET>&thought=<dictation>&topic=<optional>&date=2026-06-17
 ```
 
-### Shortcut actions (Shortcuts app → new shortcut, name it "Note a thought")
+### Shortcut actions (Shortcuts app → new shortcut)
 
-1. **Dictate Text** — captures speech → variable *Dictated Text*.
+Avoid naming it anything starting with a system keyword like "Note" or "Remind" —
+Siri hijacks those to Apple Notes/Reminders. Use something distinctive, e.g.
+**"Log a thought"** or **"Brain dump"**.
+
+1. **Dictate Text** — tap to expand → **Stop Listening → On Tap**. This is the key
+   setting: it waits for *you* to tap, so you can pause and think mid-thought
+   instead of it cutting off on a silence. Output → variable *Dictated Text*.
 2. *(optional)* **Date** → **Format Date** (Custom format `yyyy-MM-dd`) → *Formatted Date*.
 3. **Get Contents of URL**:
    - URL: `https://mariprasad.com/api/log-thought`
@@ -79,13 +85,28 @@ secret=<LOG_SECRET>&thought=<dictation>&topic=<optional>&date=2026-06-17
    - Request Body: **Form**
    - Form fields:
      - `secret` = your `LOG_SECRET`
-     - `thought` = *Dictated Text*
+     - `thought` = the **Dictated Text** variable from step 1 — **not** "Ask Each Time"
      - `topic` = a fixed tag, or skip *(optional)*
      - `date` = *Formatted Date* *(optional)*
-4. *(optional)* **Show Notification** with the response ("Saved ✓").
+4. *(optional)* **Show Notification** with the response ("Saved ✓") so you get
+   confirmation — otherwise it saves silently.
 
-Trigger hands-free with "Hey Siri, note a thought", or add it to the Home Screen /
-Back Tap.
+### Triggering it
+
+Because **Stop Listening: On Tap** needs a tap to finish, launch the Shortcut by
+**tapping**, not by pure voice:
+
+- **Back Tap** (best): Settings → Accessibility → Touch → **Back Tap** → **Double Tap**
+  → pick the Shortcut. Double-tap the phone's back → dictation screen appears → talk,
+  pause freely → **tap Done**.
+- Or add it to the **Home Screen** / a widget for one tap.
+
+> **The trade-off:** "On Tap" (pause freely, tap to finish) and fully hands-free voice
+> are mutually exclusive. If you trigger by "Hey Siri" with `thought` set to *Ask Each
+> Time*, Siri uses its own dictation, which always stops on a pause and ignores the
+> On Tap setting. For thinking-out-loud, **Dictate Text + On Tap + Back Tap** is the
+> sweet spot. For true hands-free, accept stop-on-pause (or set Dictate Text →
+> *Stop Listening → After Time Limit* with a longer limit).
 
 ### Notes
 
