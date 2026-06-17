@@ -47,50 +47,50 @@ In production, the nightly workflow (or next deploy) refreshes it automatically.
 
 Speak a thought; it lands as a row here and is searchable on the next rebuild.
 
-### Token
+The Shortcut posts a **simple form** to our own endpoint `/api/log-thought`, which
+holds the Airtable token server-side and writes the row. The phone never holds an
+Airtable token or builds nested JSON — same pattern as `/api/log-place`.
 
-Create a **separate** Personal Access Token for the Shortcut — never the site's
-read-only token:
+### Endpoint
 
-- Scope: `data.records:write` (add `data.records:read` if you want save confirmation).
-- Access: base `appOjONooljd6cwwi` only.
+`src/app/api/log-thought/route.ts` — `POST /api/log-thought`
 
-This token lives inside the Shortcut on your device.
-
-### The request
+- Form (or JSON) fields: `secret` (required), `thought` (required), `topic`, `date`.
+- Auth: `secret` must equal the server's `LOG_SECRET` (the same shared secret used
+  for place logging). On mismatch → 401.
+- Writes `{ Thought, Topic, Date }` to the Thoughts table with the server's
+  `AIRTABLE_TOKEN` (needs `data.records:write`).
+- Returns `Saved ✓` (200), or 400 (missing `thought`) / 401 (bad secret) / 502.
 
 ```
-POST https://api.airtable.com/v0/appOjONooljd6cwwi/Thoughts
-Authorization: Bearer <WRITE_TOKEN>
-Content-Type: application/json
+POST https://mariprasad.com/api/log-thought
+Content-Type: application/x-www-form-urlencoded
 
-{ "fields": { "Thought": "<dictation>", "Topic": "<optional>", "Date": "2026-06-17" } }
+secret=<LOG_SECRET>&thought=<dictation>&topic=<optional>&date=2026-06-17
 ```
-
-Airtable's Date field accepts an ISO `yyyy-MM-dd` string. `Thought` is the only
-field that matters; `Topic`/`Date` are optional.
 
 ### Shortcut actions (Shortcuts app → new shortcut, name it "Note a thought")
 
 1. **Dictate Text** — captures speech → variable *Dictated Text*.
 2. *(optional)* **Date** → **Format Date** (Custom format `yyyy-MM-dd`) → *Formatted Date*.
-3. **Dictionary** — build the body:
-   - Key `fields` → type **Dictionary**:
-     - `Thought` (Text) = *Dictated Text*
-     - `Date` (Text) = *Formatted Date*  *(optional)*
-     - `Topic` (Text) = a fixed tag, or skip *(optional)*
-4. **Get Contents of URL**:
-   - URL: `https://api.airtable.com/v0/appOjONooljd6cwwi/Thoughts`
+3. **Get Contents of URL**:
+   - URL: `https://mariprasad.com/api/log-thought`
    - Method: **POST**
-   - Headers: `Authorization` = `Bearer <WRITE_TOKEN>`, `Content-Type` = `application/json`
-   - Request Body: **JSON** = the Dictionary from step 3.
-5. *(optional)* **Show Notification** — "Thought saved" (or check the response for an `id`).
+   - Request Body: **Form**
+   - Form fields:
+     - `secret` = your `LOG_SECRET`
+     - `thought` = *Dictated Text*
+     - `topic` = a fixed tag, or skip *(optional)*
+     - `date` = *Formatted Date* *(optional)*
+4. *(optional)* **Show Notification** with the response ("Saved ✓").
 
 Trigger hands-free with "Hey Siri, note a thought", or add it to the Home Screen /
 Back Tap.
 
 ### Notes
 
+- No Airtable token on the phone — only the shared `LOG_SECRET`. Keep `LOG_SECRET`
+  set on Vercel (it already is, for place logging).
 - Topic by voice is awkward; easiest is to leave it blank (defaults to "A thought")
   or hardcode a tag. You can always set Topic later in Airtable.
 - The thought becomes searchable on the next index rebuild — nightly in prod, or
