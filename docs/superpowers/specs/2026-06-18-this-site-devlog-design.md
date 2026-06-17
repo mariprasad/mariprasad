@@ -51,13 +51,23 @@ export type NoteMeta = {
 - **Baking page** (`src/app/baking/page.tsx`): swap `getAllNotes()` →
   `getNotesByCategory("baking")` for the "Baking notes" list, so build notes never
   appear there.
-- **Work page** (`src/app/work/page.tsx`): add a new final section, "This very site",
-  rendering:
-  - a short first-person blurb,
-  - a tech-chip row: Next.js · OpenAI embeddings · Airtable · GitHub Actions · iOS Shortcuts,
-  - the running-notes list from `getNotesByCategory("build")` — same visual treatment
-    as the Bakery notes (left-border list, title + summary, link to `/notes/<slug>`),
-  - an "Ask it something →" link to the homepage Ask box (`/#ask-mari-slot`).
+- **Work page** (`src/app/work/page.tsx`): add a new **final** section, "This very
+  site" — but **visually highlighted** so it draws the eye and pulls clicks despite
+  being last (a plain list here would get scrolled past). Treatment:
+  - Wrap the whole block in a distinct **accent panel** that stands out from the plain
+    sections above — a tinted card using the site's existing accent language
+    (e.g. `rounded-2xl border border-pine/30 bg-pine/5 p-7`, the same family as the
+    Bakery's "Yeast or sourdough?" cards), so it reads as a deliberate highlight.
+  - An inviting heading ("This very site") + a one-line teaser that provokes curiosity
+    about the build (e.g. "That Ask box on the home page? I built it to answer in my
+    own words. Here's how — and the rest of the machinery behind this site.").
+  - A tech-chip row: Next.js · OpenAI embeddings · Airtable · GitHub Actions · iOS Shortcuts.
+  - The running notes from `getNotesByCategory("build")` rendered as **clickable cards**
+    (a small grid like the Bakery's "Yeast or sourdough?" choices — title + summary,
+    hover state, terracotta "→"), not a flat left-border list — so each clearly invites
+    a click through to `/notes/<slug>`.
+  - A prominent "Ask it something →" call-to-action linking to the homepage Ask box
+    (`/#ask-mari-slot`).
 
 ### Search
 
