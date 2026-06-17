@@ -1,4 +1,6 @@
 import { FEATURED, PROJECTS, EXPERIENCE, RESUME_URL } from "@/data/work";
+import Link from "next/link";
+import { getNotesByCategory } from "@/lib/content";
 
 export const metadata = { title: "Work — Mariprasad" };
 
@@ -7,6 +9,7 @@ function prettyHost(url: string): string {
 }
 
 export default function WorkPage() {
+  const buildNotes = getNotesByCategory("build");
   return (
     <div className="mx-auto max-w-3xl px-5 py-16">
       <h1 className="text-5xl text-ink">The Work</h1>
@@ -70,6 +73,36 @@ export default function WorkPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mt-16 rounded-2xl border border-pine/30 bg-pine/5 p-7">
+        <p className="label text-pine">Colophon</p>
+        <h2 className="mt-2 text-3xl text-ink">This very site</h2>
+        <p className="mt-3 text-ink-soft max-w-2xl">
+          That Ask box on the home page? I built it to answer in my own words — a little
+          retrieval engine over everything I&apos;ve written here. These are my notes on how
+          it, and the rest of the machinery behind this site, actually works.
+        </p>
+        <ul className="mt-5 flex flex-wrap gap-2">
+          {["Next.js", "OpenAI embeddings", "Airtable", "GitHub Actions", "iOS Shortcuts"].map((s) => (
+            <li key={s} className="label rounded-full border border-ink/15 px-3 py-1 text-ink-soft">{s}</li>
+          ))}
+        </ul>
+        {buildNotes.length > 0 && (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {buildNotes.map((n) => (
+              <Link key={n.slug} href={`/notes/${n.slug}`}
+                className="group block rounded-xl border border-ink/10 bg-paper/60 p-5 transition-colors hover:border-terracotta">
+                <p className="text-lg text-ink group-hover:text-terracotta transition-colors">{n.meta.title}</p>
+                <p className="mt-1 text-sm text-ink-soft">{n.meta.summary}</p>
+                <p className="mt-3 label text-terracotta">Read →</p>
+              </Link>
+            ))}
+          </div>
+        )}
+        <a href="/#ask-mari-slot" className="mt-6 inline-block label text-terracotta hover:underline">
+          Ask it something →
+        </a>
       </section>
     </div>
   );
