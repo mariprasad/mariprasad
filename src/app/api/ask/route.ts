@@ -42,9 +42,12 @@ export async function POST(req: Request) {
   }
 
   // Grounded answer + real source chips (built by us, not the model).
-  const sources = chunks
-    .filter((c) => c.url)
-    .map((c) => ({ title: c.title, url: c.url as string }));
+  // Dedupe by url: several retrieved chunks can come from the same page.
+  const byUrl = new Map<string, { title: string; url: string }>();
+  for (const c of chunks) {
+    if (c.url && !byUrl.has(c.url)) byUrl.set(c.url, { title: c.title, url: c.url });
+  }
+  const sources = [...byUrl.values()];
 
   return createDataStreamResponse({
     execute: (dataStream) => {
