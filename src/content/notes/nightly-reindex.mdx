@@ -1,0 +1,12 @@
+---
+title: A nightly robot that re-reads everything
+date: "2026-06-18"
+summary: Every night a small job wakes up, re-reads all my notes and saved places, and refreshes what the Ask box knows — so a thought I jot today is searchable by morning.
+category: build
+---
+
+The Ask box is only as current as what it has read. Recipes and notes change when I deploy the site — but the places I save and the thoughts I jot down change whenever I feel like it, no deploy involved.
+
+So there's a little robot. Every night it wakes up, pulls everything in (including anything new), and rebuilds the index the Ask box searches. It's careful: it only re-reads the bits that actually changed, so it costs next to nothing.
+
+The upshot — I can be standing in a queue, save a place or mumble a thought into my phone, and by the next morning the site quietly knows about it. I rather like that it keeps learning while I sleep.

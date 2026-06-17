@@ -24,3 +24,16 @@ test("getNotesByCategory splits baking from build", () => {
   expect(build.every((n) => n.meta.category === "build")).toBe(true);
   expect(build.some((n) => n.slug === "softer-crust")).toBe(false);
 });
+
+test("the four build notes are present", () => {
+  const build = getNotesByCategory("build");
+  expect(build.length).toBeGreaterThanOrEqual(4);
+  expect(build.map((n) => n.slug)).toEqual(
+    expect.arrayContaining([
+      "talk-like-me",
+      "nightly-reindex",
+      "site-from-my-phone",
+      "never-googles",
+    ]),
+  );
+});
