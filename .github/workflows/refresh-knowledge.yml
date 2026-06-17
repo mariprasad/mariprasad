@@ -1,0 +1,34 @@
+name: Refresh knowledge index
+on:
+  schedule:
+    - cron: "30 20 * * *" # 02:00 IST daily
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+      - name: Commit refreshed index if changed
+        run: |
+          if ! git diff --quiet -- src/data/knowledge-index.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add src/data/knowledge-index.json
+            git commit -m "chore(knowledge): nightly index refresh"
+            git push
+          else
+            echo "index unchanged"
+          fi
