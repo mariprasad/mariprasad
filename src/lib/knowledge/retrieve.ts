@@ -35,7 +35,8 @@ export async function retrieve(
   k: number = TOP_K,
   minScore: number = MIN_SCORE,
 ): Promise<RetrievedChunk[]> {
-  if (!question.trim() || CHUNKS.length === 0) return [];
+  if (!question.trim() || !Array.isArray(CHUNKS) || CHUNKS.length === 0) return [];
+  if (!Array.isArray(CHUNKS[0]?.vector)) return []; // guard a malformed index
   const { embedding } = await embed({ model: embeddingModel(), value: question });
   return rank(embedding, CHUNKS, k, minScore);
 }

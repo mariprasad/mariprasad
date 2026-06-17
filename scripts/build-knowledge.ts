@@ -76,7 +76,11 @@ async function main(): Promise<void> {
     });
     const byId = new Map(toEmbed.map((d, i) => [d.id, embeddings[i]]));
     for (const c of out) {
-      if (c.vector.length === 0) c.vector = byId.get(c.id) as number[];
+      if (c.vector.length === 0) {
+        const vec = byId.get(c.id);
+        if (!vec) throw new Error(`Missing embedding for chunk ${c.id}`);
+        c.vector = vec;
+      }
     }
   }
 
