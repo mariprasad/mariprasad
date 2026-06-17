@@ -1,11 +1,29 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useChat } from "ai/react";
 
 type Source = { title: string; url: string };
 
+// Rotating placeholder — hints at the range (films, code, cricket, baking, food,
+// travel) and sparks a question, without fixing a narrow list.
+const PROMPTS = [
+  "Best film I saw this year?",
+  "Why Next.js?",
+  "Fastest I've bowled?",
+  "A bake worth the 3-day wait?",
+  "Where should I eat in Bengaluru?",
+  "A trek that nearly broke me?",
+];
+
 export default function AskMari() {
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, data } =
     useChat({ api: "/api/ask" });
+
+  const [promptIdx, setPromptIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setPromptIdx((i) => (i + 1) % PROMPTS.length), 3500);
+    return () => clearInterval(id);
+  }, []);
 
   // Sources are pushed via dataStream.writeData({ sources }); take the latest payload.
   const sources: Source[] = (() => {
@@ -38,7 +56,7 @@ export default function AskMari() {
       <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
         <input
           value={input} onChange={handleInputChange}
-          placeholder="Ask me about a bake, a trek, a solo trip…"
+          placeholder={PROMPTS[promptIdx]}
           className="flex-1 rounded-lg border border-ink/20 bg-paper px-3 py-2 text-ink outline-none focus:border-terracotta"
         />
         <button type="submit" disabled={isLoading}
