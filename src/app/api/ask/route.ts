@@ -1,8 +1,11 @@
 import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
-import { buildSystemPrompt, isInScope } from "@/lib/ask-prompt";
+import { streamText, createDataStreamResponse } from "ai";
+import { retrieve } from "@/lib/knowledge/retrieve";
+import { buildSystemPrompt, buildOutOfScopePrompt, isInScope } from "@/lib/ask-prompt";
 
-export const runtime = "edge";
+// Node runtime: the route imports the embeddings index (too large for the edge
+// bundle limit) and runs cosine similarity in-process.
+export const runtime = "nodejs";
 
 // Public, unauthenticated endpoint: cap the payload to blunt cost-abuse.
 const MAX_MESSAGES = 20;
@@ -11,21 +14,49 @@ const MAX_TOTAL_CHARS = 6000;
 export async function POST(req: Request) {
   const { messages } = await req.json();
   if (!Array.isArray(messages) || messages.length === 0) {
-    return new Response("Ask me something about cricket, baking, travel, or my work.", { status: 400 });
+    return new Response("Ask me something about my baking, cricket, travels, or work.", { status: 400 });
   }
-  // Keep only the most recent turns, and reject oversized histories.
   const trimmed = messages.slice(-MAX_MESSAGES);
-  const totalChars = trimmed.reduce((n, m) => n + String(m?.content ?? "").length, 0);
-  const last = trimmed[trimmed.length - 1]?.content ?? "";
-  if (!isInScope(String(last)) || totalChars > MAX_TOTAL_CHARS) {
-    return new Response("Ask me something short about cricket, baking, travel, or my work.", { status: 400 });
+  const totalChars = trimmed.reduce((n: number, m: { content?: unknown }) => n + String(m?.content ?? "").length, 0);
+  const last = String(trimmed[trimmed.length - 1]?.content ?? "");
+  if (!isInScope(last) || totalChars > MAX_TOTAL_CHARS) {
+    return new Response("Ask me something short about my baking, cricket, travels, or work.", { status: 400 });
   }
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
-    system: buildSystemPrompt(),
-    messages: trimmed,
-    temperature: 0.4,
-    maxTokens: 220,
+
+  const chunks = await retrieve(last);
+
+  // Nothing relevant -> warm, in-voice deflection (generated, so it varies).
+  if (chunks.length === 0) {
+    return createDataStreamResponse({
+      execute: (dataStream) => {
+        const result = streamText({
+          model: openai("gpt-4o-mini"),
+          system: buildOutOfScopePrompt(),
+          messages: trimmed,
+          temperature: 0.6,
+          maxTokens: 120,
+        });
+        result.mergeIntoDataStream(dataStream);
+      },
+    });
+  }
+
+  // Grounded answer + real source chips (built by us, not the model).
+  const sources = chunks
+    .filter((c) => c.url)
+    .map((c) => ({ title: c.title, url: c.url as string }));
+
+  return createDataStreamResponse({
+    execute: (dataStream) => {
+      dataStream.writeData({ sources });
+      const result = streamText({
+        model: openai("gpt-4o-mini"),
+        system: buildSystemPrompt(chunks),
+        messages: trimmed,
+        temperature: 0.4,
+        maxTokens: 220,
+      });
+      result.mergeIntoDataStream(dataStream);
+    },
   });
-  return result.toDataStreamResponse();
 }
