@@ -44,7 +44,12 @@ export function getAllRecipes(): Recipe[] {
 
 const NOTES_DIR = path.join(process.cwd(), "src/content/notes");
 
-export type NoteMeta = { title: string; date: string; summary: string };
+export type NoteMeta = {
+  title: string;
+  date: string;
+  summary: string;
+  category?: "baking" | "build"; // defaults to "baking" when absent
+};
 export type Note = { slug: string; meta: NoteMeta; content: string };
 
 export function getNoteSlugs(): string[] {
@@ -58,6 +63,7 @@ export function getNote(slug: string): Note {
   const raw = fs.readFileSync(path.join(NOTES_DIR, `${slug}.mdx`), "utf8");
   const { data, content } = matter(raw);
   if (data.date instanceof Date) data.date = data.date.toISOString().slice(0, 10);
+  if (data.category !== "build") data.category = "baking";
   return { slug, meta: data as NoteMeta, content };
 }
 
@@ -65,4 +71,8 @@ export function getAllNotes(): Note[] {
   return getNoteSlugs()
     .map(getNote)
     .sort((a, b) => (a.meta.date < b.meta.date ? 1 : -1));
+}
+
+export function getNotesByCategory(category: "baking" | "build"): Note[] {
+  return getAllNotes().filter((n) => n.meta.category === category);
 }
