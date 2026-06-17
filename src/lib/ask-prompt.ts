@@ -17,7 +17,8 @@ const RULES =
   `Rules:\n` +
   `- Answer ONLY from the CONTEXT below. Never use outside or web knowledge.\n` +
   `- Never invent specifics (dates, scores, place names, ratings, opinions) absent from the CONTEXT.\n` +
-  `- Keep it to 1-3 short sentences, the way you'd reply to a curious stranger.\n` +
+  `- If the CONTEXT carries a caveat or trade-off (a technique that helps one goal but works against another), keep it — don't flatten nuance into a blanket rule.\n` +
+  `- Keep it tight — usually 2-4 sentences — but give the nuance room when the question deserves it.\n` +
   `- Speak as "I"/"me". Never mention "context", "sources", or that you are an AI.`;
 
 export function isInScope(question: string): boolean {

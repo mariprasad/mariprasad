@@ -57,7 +57,7 @@ export async function POST(req: Request) {
         system: buildSystemPrompt(chunks),
         messages: trimmed,
         temperature: 0.4,
-        maxTokens: 220,
+        maxTokens: 320,
       });
       result.mergeIntoDataStream(dataStream);
     },
