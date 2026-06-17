@@ -38,7 +38,7 @@ export default function AskMari() {
       <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
         <input
           value={input} onChange={handleInputChange}
-          placeholder="Ask me about something I've actually done…"
+          placeholder="Ask me about a bake, a trek, a solo trip…"
           className="flex-1 rounded-lg border border-ink/20 bg-paper px-3 py-2 text-ink outline-none focus:border-terracotta"
         />
         <button type="submit" disabled={isLoading}
@@ -46,9 +46,6 @@ export default function AskMari() {
           {isLoading ? "…" : "Ask"}
         </button>
       </form>
-      <p className="mt-2 label text-ink-soft">
-        Answers come only from my own notes, places, and projects — never the web.
-      </p>
       {error && (
         <p className="mt-3 text-sm text-terracotta">
           Hmm, that didn&apos;t go through — try again in a moment.
