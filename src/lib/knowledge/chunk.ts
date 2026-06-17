@@ -1,6 +1,11 @@
 /**
- * Split prose into chunks no larger than `maxChars`, preferring paragraph
- * boundaries. A single oversized paragraph is emitted as its own chunk.
+ * Split prose into chunks, preferring paragraph (blank-line) boundaries and
+ * keeping each chunk within `maxChars` where possible.
+ *
+ * Exception: a single paragraph longer than `maxChars` is emitted whole, as its
+ * own chunk — we never split mid-paragraph (it would harm embedding quality, and
+ * the embedding model tolerates inputs far larger than this cap). So a returned
+ * chunk may exceed `maxChars` only when it is one such oversized paragraph.
  */
 export function chunkText(text: string, maxChars = 800): string[] {
   const paras = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
@@ -12,7 +17,7 @@ export function chunkText(text: string, maxChars = 800): string[] {
       buf = "";
     }
     buf = buf ? `${buf}\n\n${p}` : p;
-    if (buf.length >= maxChars) {
+    if (buf.length > maxChars) {
       chunks.push(buf);
       buf = "";
     }

@@ -19,3 +19,10 @@ test("keeps whole paragraphs together when they fit", () => {
   const out = chunkText("one\n\ntwo\n\nthree", 800);
   expect(out).toEqual(["one\n\ntwo\n\nthree"]);
 });
+
+test("emits an oversized single paragraph whole, as its own chunk", () => {
+  const big = "y".repeat(1000);
+  const out = chunkText(`${big}\n\nshort tail`, 800);
+  expect(out[0]).toBe(big); // oversized paragraph kept whole
+  expect(out).toContain("short tail");
+});
