@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import PhotoGallery from "@/components/media/PhotoGallery";
-import { getAllRecipes, getAllNotes } from "@/lib/content";
+import { getAllRecipes, getNotesByCategory } from "@/lib/content";
 
 export const metadata = { title: "Baking — Mariprasad" };
 
@@ -18,7 +18,7 @@ const CHOICES = [
 
 export default function BakingIndex() {
   const recipes = getAllRecipes();
-  const notes = getAllNotes();
+  const notes = getNotesByCategory("baking");
   return (
     <div className="mx-auto max-w-5xl px-5 py-16">
       <h1 className="text-5xl text-ink">The Bakery</h1>
