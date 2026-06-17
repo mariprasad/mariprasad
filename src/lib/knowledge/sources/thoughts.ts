@@ -22,6 +22,7 @@ export async function collectThoughts(): Promise<RawDoc[]> {
       records.push(...(data.records ?? []));
       offset = data.offset;
     } while (offset && records.length < 1000);
+    if (offset) console.warn("[collectThoughts] hit 1000-record cap; some thoughts not indexed");
     return records
       .map((r): RawDoc => ({
         id: `thought:${r.id}`,
