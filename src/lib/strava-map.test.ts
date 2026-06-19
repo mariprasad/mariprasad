@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodePolyline, toLngLat, staticRouteUrl, prettyDate, findRoute } from "./strava-map";
+import { decodePolyline, toLngLat, staticRouteUrl, prettyDate, findRoute, routeHref } from "./strava-map";
 import type { StravaRoute } from "@/data/strava";
 
 describe("decodePolyline", () => {
@@ -64,5 +64,11 @@ describe("findRoute", () => {
   });
   it("returns undefined for an empty route list", () => {
     expect(findRoute([], "111")).toBeUndefined();
+  });
+});
+
+describe("routeHref", () => {
+  it("builds the per-ride deep-link path", () => {
+    expect(routeHref("9453574948")).toBe("/movement?route=9453574948");
   });
 });

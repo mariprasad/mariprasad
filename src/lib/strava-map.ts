@@ -54,3 +54,7 @@ export function findRoute<T extends { id: string }>(routes: T[], id: string | nu
   if (!id) return undefined;
   return routes.find((r) => r.id === id);
 }
+
+// The shareable per-ride deep-link path. One source of truth for the ?route= shape,
+// used by the copy-link button and by Ask Mari's source chips.
+export const routeHref = (id: string): string => `/movement?route=${id}`;

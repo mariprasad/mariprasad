@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { StravaRoute } from "@/data/strava";
-import { staticRouteUrl, prettyDate, typeIcon, findRoute } from "@/lib/strava-map";
+import { staticRouteUrl, prettyDate, typeIcon, findRoute, routeHref } from "@/lib/strava-map";
 import RouteMap from "./RouteMap";
 
 export default function RouteExplorer({ routes }: { routes: StravaRoute[] }) {
@@ -48,7 +48,7 @@ export default function RouteExplorer({ routes }: { routes: StravaRoute[] }) {
   async function copyLink() {
     if (!open || typeof navigator === "undefined" || !navigator.clipboard) return;
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?route=${open.id}`);
+      await navigator.clipboard.writeText(`${window.location.origin}${routeHref(open.id)}`);
       const id = open.id;
       setCopiedId(id);
       setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 1500);
