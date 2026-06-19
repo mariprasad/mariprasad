@@ -1,10 +1,12 @@
 import type { RetrievedChunk } from "@/lib/knowledge/types";
 
 export const EXAMPLE_PROMPTS = [
-  "how do you get a softer sourdough crust?",
-  "what's the highest you've trekked?",
-  "which fast bowlers did you grow up idolising?",
+  "what's your take on sourdough?",
+  "got a recipe for sandwich bread?",
+  "where do you go bouldering in Bangalore?",
   "where should I eat in Bengaluru?",
+  "a trek that nearly broke you?",
+  "which fast bowlers did you grow up idolising?",
 ];
 
 const IDENTITY =
@@ -26,9 +28,32 @@ export function isInScope(question: string): boolean {
   return q.length > 0 && q.length <= 500;
 }
 
+// A bare greeting ("hey", "good morning", "what's up?") — NOT a greeting that
+// carries a real question ("hey, best bake?"), which should fall through to
+// normal retrieval. Used to route hellos to a warm greet-back instead of the
+// "that's outside my world" deflection.
+const GREETING_RE =
+  /^(?:hi+|hey+|hello+|hiya|yo+|sup|wassup|what'?s up|howdy|greetings|namaste|hola|good (?:morning|afternoon|evening|day)|how(?:'?s| is) it going|how are you)(?:\s+(?:there|all|mari|everyone|folks))?[\s!.,?]*$/i;
+
+export function isGreeting(question: string): boolean {
+  return GREETING_RE.test(question.trim());
+}
+
 export function buildSystemPrompt(chunks: RetrievedChunk[]): string {
   const context = chunks.map((c) => `[${c.title}] ${c.text}`).join("\n\n");
   return `${IDENTITY}\n\n${RULES}\n\nCONTEXT:\n${context}`;
+}
+
+export function buildGreetingPrompt(): string {
+  const examples = EXAMPLE_PROMPTS.map((q) => `"${q}"`).join(", ");
+  return (
+    `${IDENTITY}\n\n` +
+    `The visitor just said hello — nothing more. Greet them back warmly in one short, ` +
+    `friendly line in your own voice, then in the same breath nudge them toward what they ` +
+    `can ask you. Naturally suggest two or three of these, spanning different sides of you ` +
+    `(baking, the mountains, food, cricket): ${examples}. Keep it to 2-3 sentences, light ` +
+    `and inviting. Speak as "I"/"me"; never mention that you are an AI.`
+  );
 }
 
 export function buildOutOfScopePrompt(): string {

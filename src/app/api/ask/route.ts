@@ -1,7 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText, createDataStreamResponse } from "ai";
 import { retrieve } from "@/lib/knowledge/retrieve";
-import { buildSystemPrompt, buildOutOfScopePrompt, isInScope } from "@/lib/ask-prompt";
+import { buildSystemPrompt, buildOutOfScopePrompt, buildGreetingPrompt, isInScope, isGreeting } from "@/lib/ask-prompt";
 
 // Node runtime: the route imports the embeddings index (too large for the edge
 // bundle limit) and runs cosine similarity in-process.
@@ -21,6 +21,23 @@ export async function POST(req: Request) {
   const last = String(trimmed[trimmed.length - 1]?.content ?? "");
   if (!isInScope(last) || totalChars > MAX_TOTAL_CHARS) {
     return new Response("Ask me something short about my baking, cricket, travels, or work.", { status: 400 });
+  }
+
+  // A bare hello -> warm greet-back with a few things they could ask (no retrieval,
+  // no source chips), instead of the "that's outside my world" deflection.
+  if (isGreeting(last)) {
+    return createDataStreamResponse({
+      execute: (dataStream) => {
+        const result = streamText({
+          model: openai("gpt-4o-mini"),
+          system: buildGreetingPrompt(),
+          messages: trimmed,
+          temperature: 0.7,
+          maxTokens: 160,
+        });
+        result.mergeIntoDataStream(dataStream);
+      },
+    });
   }
 
   const chunks = await retrieve(last);

@@ -63,7 +63,7 @@ export default function AskMari() {
         />
         <button type="submit" disabled={isLoading}
           className="rounded-lg bg-terracotta px-4 py-2 text-paper disabled:opacity-50">
-          {isLoading ? "…" : "Ask"}
+          {isLoading ? "…" : "Go"}
         </button>
       </form>
       {error && (
