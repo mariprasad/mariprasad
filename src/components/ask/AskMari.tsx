@@ -39,7 +39,9 @@ export default function AskMari() {
       <div className="space-y-3 max-h-64 overflow-y-auto">
         {messages.map((m) => (
           <p key={m.id} className={m.role === "user" ? "text-ink-soft" : "text-ink"}>
-            <span className="label mr-2">{m.role === "user" ? "you" : "mari"}</span>
+            {m.role === "user"
+              ? <span className="label mr-2">you</span>
+              : <span className="label mr-2" style={{ textTransform: "none" }}>Mari</span>}
             {m.content}
           </p>
         ))}

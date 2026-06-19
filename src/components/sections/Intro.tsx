@@ -11,7 +11,7 @@ export default function Intro() {
         I had taken cricket a bit more seriously.
       </p>
       <div id="ask-mari-slot" className="mt-10 max-w-2xl">
-        <p className="label text-terracotta">Curious about something? Ask me.</p>
+        <p className="label text-terracotta">Talk to me?</p>
         <div className="mt-3"><AskMari /></div>
       </div>
     </Reveal>
