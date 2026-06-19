@@ -47,3 +47,10 @@ export function prettyDate(iso: string): string {
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
+
+// Look up a route by its (URL-param) id. Returns undefined for a missing/blank id
+// or no match — the deep-link's "open this ride" lookup, kept pure for testing.
+export function findRoute<T extends { id: string }>(routes: T[], id: string | null): T | undefined {
+  if (!id) return undefined;
+  return routes.find((r) => r.id === id);
+}

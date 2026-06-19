@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { decodePolyline, toLngLat, staticRouteUrl, prettyDate } from "./strava-map";
+import { decodePolyline, toLngLat, staticRouteUrl, prettyDate, findRoute } from "./strava-map";
+import type { StravaRoute } from "@/data/strava";
 
 describe("decodePolyline", () => {
   it("decodes the canonical example", () => {
@@ -41,5 +42,27 @@ describe("prettyDate", () => {
   });
   it("passes through unparseable input", () => {
     expect(prettyDate("not a date")).toBe("not a date");
+  });
+});
+
+describe("findRoute", () => {
+  const route = (id: string, name: string): StravaRoute => ({
+    id, name, type: "Ride", date: "2024-01-01T00:00:00.000Z",
+    distanceKm: 10, movingMin: 30, elevationM: 100, polyline: "", points: 0, media: [],
+  });
+  const routes = [route("111", "Morning Ride"), route("222", "Hill Repeats")];
+
+  it("finds the route whose id matches", () => {
+    expect(findRoute(routes, "222")?.name).toBe("Hill Repeats");
+  });
+  it("returns undefined when no id matches", () => {
+    expect(findRoute(routes, "999")).toBeUndefined();
+  });
+  it("returns undefined for a null or empty id", () => {
+    expect(findRoute(routes, null)).toBeUndefined();
+    expect(findRoute(routes, "")).toBeUndefined();
+  });
+  it("returns undefined for an empty route list", () => {
+    expect(findRoute([], "111")).toBeUndefined();
   });
 });
