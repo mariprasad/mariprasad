@@ -11,7 +11,7 @@ export default function BakerySection() {
         <h2 className="text-4xl text-ink">The Bakery</h2>
         <Link href="/baking" className="label text-terracotta hover:underline">All bakes →</Link>
       </div>
-      <p className="mt-3 text-ink-soft max-w-xl">Milk breads, semi-sourdoughs, the occasional honest croissant failure.</p>
+      <p className="mt-3 text-ink-soft max-w-xl">Milk breads, sourdough & croissant trials and the failures.</p>
       <div className="mt-8 grid sm:grid-cols-3 gap-5">
         {recent.map((r) => (
           <Link key={r.slug} href={`/baking/${r.slug}`} className="group block">

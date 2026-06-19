@@ -5,7 +5,7 @@ import { getAllRecipes, getNotesByCategory } from "@/lib/content";
 
 export const metadata = { title: "Baking — Mariprasad" };
 
-// "From the bench" — real bakes since July 2024 (optimised into /photos/baking/bench).
+// "From the bench" — real bakes since July 2025 (optimised into /photos/baking/bench).
 const BENCH = Array.from({ length: 10 }, (_, i) => `/photos/baking/bench/bench-${String(i + 1).padStart(2, "0")}.jpg`);
 
 // How I pick what to bake — a quick→slow ladder, each linking to the bake that fits.
@@ -22,7 +22,7 @@ export default function BakingIndex() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-16">
       <h1 className="text-5xl text-ink">The Bakery</h1>
-      <p className="mt-3 text-ink-soft max-w-xl">Every bake since July 2024 — proofs, crumbs, and the honest failures.</p>
+      <p className="mt-3 text-ink-soft max-w-xl">Every bake since July 2025 — proofs, crumbs, and the failures.</p>
       <p className="mt-4 text-ink-soft max-w-2xl">
         So much of it comes down to a balance I'm still learning to feel — dough strength against fermentation against hydration — and I write down what I notice after every bake. The side effect of all that practice: my friends are getting fed a lot of bread. Probably too much, at this point.
       </p>
@@ -64,7 +64,7 @@ export default function BakingIndex() {
 
       <section className="mt-16">
         <h2 className="text-3xl text-ink">From the bench</h2>
-        <p className="mt-2 text-ink-soft max-w-xl">A year of bakes since July 2024 — soft buns and milk bread, scones, and a three-day sourdough I'm still working at. Loving it all while I'm at it.</p>
+        <p className="mt-2 text-ink-soft max-w-xl">A year of bakes since July 2025 — soft buns and milk bread, scones, and a three-day sourdough I'm still working at. Loving it!</p>
         <div className="mt-6"><PhotoGallery photos={BENCH} alt="A bake from the bench" /></div>
       </section>
 

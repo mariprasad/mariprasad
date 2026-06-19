@@ -647,7 +647,7 @@ CRICKET
 - Heroes: Dale Steyn, Glenn McGrath, Brett Lee; loves fast bowling generally.
 - Favourite batsman: Sachin Tendulkar. IPL team: Royal Challengers Bengaluru.
 
-BAKING (since July 2024)
+BAKING (since July 2025)
 - Many milk breads; semi-sourdough breads (~24h); true sourdough (~3 days / 72h).
 - Tried croissants, failed honestly so far, intends to conquer them.
 - Cooks occasionally these days.
@@ -860,7 +860,7 @@ export default function BakerySection() {
         <h2 className="text-4xl text-ink">The Bakery</h2>
         <Link href="/baking" className="label text-terracotta hover:underline">All bakes →</Link>
       </div>
-      <p className="mt-3 text-ink-soft max-w-xl">Milk breads, semi-sourdoughs, the occasional honest croissant failure.</p>
+      <p className="mt-3 text-ink-soft max-w-xl">Milk breads, sourdough & croissant trials and the failures.</p>
       <div className="mt-8 grid sm:grid-cols-3 gap-5">
         {recent.map((r) => (
           <Link key={r.slug} href={`/baking/${r.slug}`} className="group block">
@@ -1486,7 +1486,7 @@ export default function BakingIndex() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-16">
       <h1 className="text-5xl text-ink">The Bakery</h1>
-      <p className="mt-3 text-ink-soft max-w-xl">Every bake since July 2024 — proofs, crumbs, and the honest failures.</p>
+      <p className="mt-3 text-ink-soft max-w-xl">Every bake since July 2025 — proofs, crumbs, and the honest failures.</p>
       <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((r) => (
           <Link key={r.slug} href={`/baking/${r.slug}`} className="group block">
