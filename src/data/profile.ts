@@ -6,7 +6,8 @@ export const PROFILE = {
   coords: { lat: 12.9719, lon: 77.5937 }, // Bengaluru — for the live local-conditions line
   email: "mari2prasad@gmail.com",
   socials: {
-    linkedin: "https://www.linkedin.com/in/mariprasadr",
+    linkedin: "https://www.linkedin.com/in/mariprasadr/",
+    instagram: "https://www.instagram.com/mariprasad_ramakrishna/",
     github: "", // TODO: Mari to provide recent GitHub URL
   },
   letterboxdUser: "mariprasad",

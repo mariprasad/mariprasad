@@ -11,6 +11,7 @@ export default function Footer() {
       </div>
       <div className="mt-4 flex gap-4 text-sm">
         <a href={socials.linkedin} className="text-ink hover:text-terracotta">LinkedIn</a>
+        {socials.instagram && <a href={socials.instagram} className="text-ink hover:text-terracotta">Instagram</a>}
         {socials.github && <a href={socials.github} className="text-ink hover:text-terracotta">GitHub</a>}
         <a href={`mailto:${email}`} className="text-ink hover:text-terracotta">Email</a>
       </div>
