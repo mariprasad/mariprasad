@@ -1,6 +1,7 @@
 import {
-  collectCricket, collectTravel, collectWork, collectMovement, collectProfile,
+  collectCricket, collectTravel, collectWork, collectMovement, collectProfile, collectContact,
 } from "./static";
+import { PROFILE } from "@/data/profile";
 
 test("cricket adapter mentions the bowling heroes", async () => {
   const [doc] = await collectCricket();
@@ -42,6 +43,16 @@ test("movement Yunam doc carries the 'broke me / turned back' failure language",
   const yunam = docs.find((d) => d.id === "movement:yunam")!;
   expect(yunam.text).toMatch(/broke me/i);
   expect(yunam.text).toMatch(/turned back/i);
+});
+
+test("contact adapter exposes each channel with its real link", async () => {
+  const docs = await collectContact();
+  expect(docs.every((d) => d.source === "contact" && !!d.url)).toBe(true);
+  const urls = docs.map((d) => d.url);
+  expect(urls).toContain(PROFILE.socials.instagram);
+  expect(urls).toContain(PROFILE.socials.linkedin);
+  expect(urls).toContain(`mailto:${PROFILE.email}`);
+  expect(docs.map((d) => d.title)).toEqual(expect.arrayContaining(["Instagram", "LinkedIn", "Email"]));
 });
 
 test("profile adapter includes location and the physical stats", async () => {

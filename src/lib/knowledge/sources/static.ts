@@ -72,6 +72,36 @@ export async function collectMovement(): Promise<RawDoc[]> {
   ];
 }
 
+// How to reach Mari — one tiny doc per channel so connection questions ("do you
+// have an insta?", "how can I reach you?") retrieve them and Ask Mari shows a
+// clickable source chip per channel. Each url is the real link.
+export async function collectContact(): Promise<RawDoc[]> {
+  const { socials, email } = PROFILE;
+  const docs: RawDoc[] = [];
+  if (socials.instagram) {
+    docs.push({
+      id: "contact:instagram", source: "contact", title: "Instagram",
+      text: "You can find me on Instagram — I'm @mariprasad_ramakrishna. Come say hi.",
+      url: socials.instagram,
+    });
+  }
+  if (socials.linkedin) {
+    docs.push({
+      id: "contact:linkedin", source: "contact", title: "LinkedIn",
+      text: "To connect professionally, I'm on LinkedIn at linkedin.com/in/mariprasadr.",
+      url: socials.linkedin,
+    });
+  }
+  if (email) {
+    docs.push({
+      id: "contact:email", source: "contact", title: "Email",
+      text: `The most direct way to reach me is email — ${email}.`,
+      url: `mailto:${email}`,
+    });
+  }
+  return docs;
+}
+
 export async function collectProfile(): Promise<RawDoc[]> {
   const ms = PROFILE.milestones.map((m) => `${m.label}: ${m.value}`).join("; ");
   return [{

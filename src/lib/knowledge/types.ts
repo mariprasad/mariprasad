@@ -1,6 +1,6 @@
 export type SourceKind =
   | "recipe" | "note" | "place" | "film" | "cricket"
-  | "travel" | "work" | "movement" | "profile" | "strava" | "thought";
+  | "travel" | "work" | "movement" | "profile" | "strava" | "thought" | "contact";
 
 /** A source document before embedding. */
 export type RawDoc = {

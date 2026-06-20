@@ -47,11 +47,19 @@ export default function AskMari() {
         ))}
         {sources.length > 0 && !isLoading && (
           <div className="flex flex-wrap gap-2 pl-1">
-            {sources.map((s, i) => (
-              <a key={`${s.url}-${i}`} href={s.url} className="label text-terracotta hover:underline">
-                from {s.title} →
-              </a>
-            ))}
+            {sources.map((s, i) => {
+              const external = /^https?:\/\//.test(s.url);
+              return (
+                <a
+                  key={`${s.url}-${i}`}
+                  href={s.url}
+                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="label text-terracotta hover:underline"
+                >
+                  from {s.title} →
+                </a>
+              );
+            })}
           </div>
         )}
       </div>
