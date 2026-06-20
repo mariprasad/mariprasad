@@ -1,7 +1,9 @@
+import { after } from "next/server";
 import { openai } from "@ai-sdk/openai";
 import { streamText, createDataStreamResponse } from "ai";
 import { retrieve } from "@/lib/knowledge/retrieve";
 import { buildSystemPrompt, buildOutOfScopePrompt, buildGreetingPrompt, isInScope, isGreeting } from "@/lib/ask-prompt";
+import { logQuestion } from "@/lib/airtable-questions";
 
 // Node runtime: the route imports the embeddings index (too large for the edge
 // bundle limit) and runs cosine similarity in-process.
@@ -26,6 +28,7 @@ export async function POST(req: Request) {
   // A bare hello -> warm greet-back with a few things they could ask (no retrieval,
   // no source chips), instead of the "that's outside my world" deflection.
   if (isGreeting(last)) {
+    after(() => logQuestion(last, "greeting"));
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
@@ -44,6 +47,7 @@ export async function POST(req: Request) {
 
   // Nothing relevant -> warm, in-voice deflection (generated, so it varies).
   if (chunks.length === 0) {
+    after(() => logQuestion(last, "unanswered"));
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
@@ -65,6 +69,7 @@ export async function POST(req: Request) {
     if (c.url && !byUrl.has(c.url)) byUrl.set(c.url, { title: c.title, url: c.url });
   }
   const sources = [...byUrl.values()];
+  after(() => logQuestion(last, "answered", sources[0]?.title));
 
   return createDataStreamResponse({
     execute: (dataStream) => {
